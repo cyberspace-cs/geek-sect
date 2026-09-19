@@ -1,0 +1,99 @@
+﻿<!--pages/index/index.wxml · 极客宗修炼主页-->
+<view class="page">
+
+  <!-- 码道人问候区 -->
+  <view class="hero">
+    <view class="coach-row">
+      <view class="coach-avatar">🧙‍♂️</view>
+      <view class="coach-info">
+        <view class="coach-name">码道人 <text class="coach-title">· 宗主</text></view>
+        <view class="coach-line">"{{coachGreeting}}"</view>
+      </view>
+    </view>
+
+    <!-- 境界与修为 -->
+    <view class="realm-card">
+      <view class="realm-top">
+        <view class="realm-badge" style="color:{{realmColor}};border-color:{{realmColor}};">{{realmName}}</view>
+        <view class="realm-exp">修为 {{exp}}</view>
+      </view>
+      <view class="exp-bar">
+        <view class="exp-fill" style="width:{{expProgress}}%;background:{{realmColor}};"></view>
+      </view>
+      <view class="realm-desc">{{realmDesc}} · 距下一境界还需 {{nextExp}} 修为</view>
+    </view>
+  </view>
+
+  <!-- 今日修炼统计 -->
+  <view class="stats-row">
+    <view class="stat-item">
+      <view class="stat-num">{{streak}}</view>
+      <view class="stat-label">连续Commit</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <view class="stat-num">{{doneToday}}</view>
+      <view class="stat-label">今日提交</view>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <view class="stat-num">{{wrongCount}}</view>
+      <view class="stat-label">Bug待除</view>
+    </view>
+  </view>
+
+  <!-- 修炼区域选择 -->
+  <view class="section-title">选择修炼区域</view>
+  <view class="area-list">
+    <view class="area-card" wx:for="{{cats}}" wx:key="key" bindtap="startQuiz" data-cat="{{item.key}}">
+      <view class="area-icon" style="background:{{item.bg}}">{{item.emoji}}</view>
+      <view class="area-meta">
+        <view class="area-name">{{item.name}}历练</view>
+        <view class="area-desc">{{item.desc}}</view>
+      </view>
+      <view class="area-count">{{item.count}} 关 ›</view>
+    </view>
+  </view>
+
+  <!-- 进阶修炼入口 -->
+  <view class="section-title">进阶修炼</view>
+  <view class="feature-list">
+    <view class="feature-card" bindtap="openDashboard">
+      <view class="feature-icon">📊</view>
+      <view class="feature-body">
+        <view class="feature-title">AI 修炼仪表盘</view>
+        <view class="feature-desc">码道人的多智能体团队为你分析薄弱点、制定修炼路径</view>
+      </view>
+      <view class="feature-arrow">›</view>
+    </view>
+
+    <view class="feature-card" bindtap="openExam">
+      <view class="feature-icon">⚔️</view>
+      <view class="feature-body">
+        <view class="feature-title">宗门大比</view>
+        <view class="feature-desc">全真模拟考试，检验修炼成果，生成完整战报</view>
+      </view>
+      <view class="feature-arrow">›</view>
+    </view>
+
+    <view class="feature-card" bindtap="openChat">
+      <view class="feature-icon">💬</view>
+      <view class="feature-body">
+        <view class="feature-title">请教宗主</view>
+        <view class="feature-desc">任意备考疑问，码道人亲自为你答疑解惑</view>
+      </view>
+      <view class="feature-arrow">›</view>
+    </view>
+
+    <view class="feature-card" bindtap="openWeb">
+      <view class="feature-icon">🔮</view>
+      <view class="feature-body">
+        <view class="feature-title">AI 工坊 · 深度版</view>
+        <view class="feature-desc">AI 讲题、变式训练、押题预测，完整 H5 智能平台</view>
+      </view>
+      <view class="feature-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="footer-tip">极客宗 · 勤耕不辍，天道酬勤</view>
+</view>

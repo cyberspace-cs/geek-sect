@@ -1,0 +1,83 @@
+﻿<!--pages/dashboard/dashboard.wxml · AI 修炼仪表盘-->
+<view class="page">
+
+  <!-- 多智能体工作流 -->
+  <view class="section">
+    <view class="section-title">🤖 AI 教练团队工作中</view>
+    <view class="team-grid">
+      <view class="team-member {{teamStatus[idx]}}" wx:for="{{team}}" wx:key="id" wx:for-index="idx">
+        <view class="member-icon" style="background:{{item.color}}22;border-color:{{item.color}};">
+          {{item.icon}}
+        </view>
+        <view class="member-name">{{item.name}}</view>
+        <view class="member-role">{{item.role}}</view>
+        <view class="member-status" wx:if="{{teamStatus[idx] === 'running'}}">
+          <view class="dot pulse"></view> 工作中
+        </view>
+        <view class="member-status done" wx:elif="{{teamStatus[idx] === 'done'}}">✅ 完成</view>
+        <view class="member-status idle" wx:else>⏳ 待命</view>
+      </view>
+    </view>
+
+    <!-- 实时日志 -->
+    <view class="log-box" wx:if="{{teamLogs.length}}">
+      <view class="log-title">实时日志</view>
+      <view class="log-list">
+        <view class="log-item" wx:for="{{teamLogs}}" wx:key="time">
+          <text class="log-time">{{item.time}}</text>
+          <text class="log-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 知识掌握度雷达（用条形图模拟，小程序不支持canvas雷达） -->
+  <view class="section" wx:if="{{!analyzing}}">
+    <view class="section-title">📊 知识掌握度图谱</view>
+    <view class="radar-list">
+      <view class="radar-item" wx:for="{{knowledgeRadar}}" wx:key="subject">
+        <view class="radar-label">{{item.subject}}</view>
+        <view class="radar-bar-bg">
+          <view class="radar-bar-fill" style="width:{{item.value}}%;background:{{item.value >= 70 ? '#10b981' : item.value >= 50 ? '#f59e0b' : '#ef4444'}};"></view>
+        </view>
+        <view class="radar-value">{{item.value}}%</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 薄弱知识点 -->
+  <view class="section" wx:if="{{!analyzing}}">
+    <view class="section-title">⚠️ 薄弱知识点</view>
+    <view class="weak-list">
+      <view class="weak-card" wx:for="{{weakPoints}}" wx:key="name">
+        <view class="weak-header">
+          <view class="weak-name">{{item.name}}</view>
+          <view class="weak-badge {{item.level}}">{{item.level}}</view>
+        </view>
+        <view class="weak-mastery">
+          <view class="mastery-bar">
+            <view class="mastery-fill" style="width:{{item.mastery}}%;"></view>
+          </view>
+          <view class="mastery-text">掌握度 {{item.mastery}}% · 错 {{item.count}} 题</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 推荐学习路径 -->
+  <view class="section" wx:if="{{!analyzing}}">
+    <view class="section-title">🗺️ 推荐修炼路径</view>
+    <view class="path-list">
+      <view class="path-card" wx:for="{{recommendPath}}" wx:key="step">
+        <view class="path-step">{{item.step}}</view>
+        <view class="path-body">
+          <view class="path-title">{{item.title}}</view>
+          <view class="path-detail">{{item.detail}}</view>
+          <view class="path-exp">+{{item.exp}} 修为</view>
+        </view>
+      </view>
+    </view>
+    <button class="btn-primary" bindtap="goQuiz" data-topic="考研">从第一步开始修炼</button>
+  </view>
+
+</view>

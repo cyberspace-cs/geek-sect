@@ -1,0 +1,37 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/chat/chat",
+    "pages/quiz/quiz",
+    "pages/wrong/wrong",
+    "pages/mine/mine",
+    "pages/webview/webview",
+    "pages/dashboard/dashboard",
+    "pages/exam/exam",
+    "pages/rank/rank"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#0a0a12",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "极客宗",
+    "backgroundColor": "#0a0a12",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#555566",
+    "selectedColor": "#00ff88",
+    "backgroundColor": "#0a0a12",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "修炼" },
+      { "pagePath": "pages/wrong/wrong", "text": "Bug录" },
+      { "pagePath": "pages/rank/rank", "text": "论道" },
+      { "pagePath": "pages/mine/mine", "text": "我的" }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>极客宗 · 修炼系统</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a12;
+    --surface: #12121e;
+    --surface-2: #1a1a2e;
+    --line: rgba(255,255,255,.08);
+    --brand: #00ff88;
+    --brand-2: #00ccff;
+    --danger: #ff6b6b;
+    --warning: #ffb84d;
+    --ink: #e8e8f0;
+    --ink-2: #b0b0c0;
+    --ink-3: #666680;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .container { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; }
+  .header {
+    padding: 24px 0;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p { color: var(--ink-3); font-size: 14px; margin-top: 4px; }
+  .coach-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .coach-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(0,255,136,.3);
+  }
+  .coach-info { flex: 1; }
+  .coach-name { font-size: 18px; font-weight: 700; color: var(--brand); }
+  .coach-title { font-size: 12px; color: var(--ink-3); }
+  .coach-line { font-size: 14px; color: var(--ink-2); margin-top: 6px; font-style: italic; }
+  .realm-card {
+    background: rgba(0,255,136,.05);
+    border: 1px solid rgba(0,255,136,.2);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .realm-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .realm-badge {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 4px 16px;
+    border: 1px solid var(--brand);
+    border-radius: 999px;
+    color: var(--brand);
+    background: rgba(0,255,136,.1);
+  }
+  .realm-exp { font-size: 14px; color: var(--ink-2); }
+  .exp-bar {
+    height: 8px;
+    background: rgba(255,255,255,.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .exp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand), var(--brand-2));
+    border-radius: 999px;
+    box-shadow: 0 0 10px rgba(0,255,136,.5);
+    transition: width .6s ease;
+  }
+  .realm-desc { font-size: 12px; color: var(--ink-3); }
+  .stats-row {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 0;
+    margin-bottom: 24px;
+  }
+  .stat-item { flex: 1; text-align: center; }
+  .stat-num { font-size: 24px; font-weight: 800; color: var(--brand); }
+  .stat-label { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .stat-divider { width: 1px; background: var(--line); }
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    padding-left: 12px;
+    border-left: 3px solid var(--brand);
+  }
+  .cat-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  .cat-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .cat-card:hover { border-color: rgba(0,255,136,.4); transform: translateY(-2px); }
+  .cat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .cat-meta { flex: 1; }
+  .cat-name { font-size: 16px; font-weight: 700; }
+  .cat-desc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .cat-count { font-size: 14px; font-weight: 600; color: var(--brand); }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+  }
+  .feature-card:hover { border-color: rgba(0,255,136,.4); }
+  .feature-icon { font-size: 32px; margin-bottom: 8px; }
+  .feature-title { font-size: 14px; font-weight: 700; }
+  .feature-desc { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .quiz-progress { font-size: 14px; color: var(--ink-2); }
+  .quiz-bar {
+    height: 4px;
+    background: rgba(255,255,255,.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .quiz-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand), var(--brand-2));
+    transition: width .3s ease;
+  }
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .question-meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+  .tag-cat { background: rgba(0,204,255,.15); color: var(--brand-2); }
+  .tag-diff { background: rgba(255,184,77,.15); color: var(--warning); }
+  .tag-type { background: rgba(255,255,255,.08); color: var(--ink-2); }
+  .question-stem { font-size: 16px; line-height: 1.8; margin-bottom: 20px; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .option:hover { border-color: rgba(0,255,136,.3); }
+  .option.selected { border-color: var(--brand); background: rgba(0,255,136,.1); }
+  .option.correct { border-color: var(--brand); background: rgba(0,255,136,.15); }
+  .option.wrong { border-color: var(--danger); background: rgba(255,107,107,.15); }
+  .option-label {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .option-text { flex: 1; font-size: 14px; }
+  .quiz-footer {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #0a0a12;
+  }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .explain-box {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(0,255,136,.05);
+    border-left: 3px solid var(--brand);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.8;
+  }
+  .wrong-list { display: flex; flex-direction: column; gap: 12px; }
+  .wrong-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .wrong-stem { font-size: 14px; margin-bottom: 8px; line-height: 1.6; }
+  .wrong-meta { font-size: 12px; color: var(--ink-3); }
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 140px; /* 避开输入框 + 底部导航 */
+  }
+  .msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .msg-user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #0a0a12;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-bot {
+    align-self: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-input-bar {
+    position: fixed;
+    bottom: 60px; /* 避开底部导航栏 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 8px;
+    z-index: 99;
+  }
+  .chat-input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 14px;
+    outline: none;
+  }
+  .chat-send {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #0a0a12;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    padding: 8px 0;
+  }
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 6px 0;
+    cursor: pointer;
+    color: var(--ink-3);
+    font-size: 11px;
+  }
+  .tab-item.active { color: var(--brand); }
+  .tab-icon { font-size: 20px; margin-bottom: 2px; }
+  .toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--surface-2);
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    z-index: 999;
+    font-size: 14px;
+  }
+
+  /* 模考页 */
+  .exam-setup {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .exam-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+  .exam-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .exam-option {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .exam-option:hover { border-color: rgba(0,255,136,.3); }
+  .exam-option.selected { border-color: var(--brand); background: rgba(0,255,136,.1); }
+  .exam-option-name { font-size: 15px; font-weight: 700; }
+  .exam-option-desc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+
+  .exam-timer {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,107,107,.15);
+    border: 1px solid var(--danger);
+    border-radius: 12px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--danger);
+    z-index: 100;
+  }
+
+  .exam-result-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .result-score { font-size: 56px; font-weight: 800; color: var(--brand); }
+  .result-label { font-size: 14px; color: var(--ink-3); margin-bottom: 24px; }
+  .result-stats { display: flex; gap: 16px; margin-bottom: 24px; }
+  .result-stat { flex: 1; }
+  .result-stat-num { font-size: 20px; font-weight: 700; }
+  .result-stat-label { font-size: 12px; color: var(--ink-3); }
+  .result-grade {
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  /* 学习报告页 */
+  .report-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .report-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .progress-bar-bg {
+    height: 8px;
+    background: rgba(255,255,255,.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat-box {
+    background: rgba(255,255,255,.03);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-box-num { font-size: 24px; font-weight: 800; color: var(--brand); }
+  .stat-box-label { font-size: 12px; color: var(--ink-3); margin-top: 4px; }
+  .topic-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .topic-name { width: 80px; font-size: 13px; color: var(--ink-2); flex-shrink: 0; }
+  .topic-bar-bg { flex: 1; height: 8px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
+  .topic-bar-fill { height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand-2)); border-radius: 999px; }
+  .topic-pct { width: 40px; font-size: 12px; color: var(--ink-3); text-align: right; }
+
+  /* 成就页 */
+  .ach-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .ach-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: all .2s;
+  }
+  .ach-card.unlocked {
+    border-color: rgba(255,184,77,.4);
+    background: rgba(255,184,77,.05);
+  }
+  .ach-icon { font-size: 36px; margin-bottom: 8px; opacity: .3; }
+  .ach-card.unlocked .ach-icon { opacity: 1; }
+  .ach-name { font-size: 14px; font-weight: 700; }
+  .ach-desc { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+
+  /* 宗门典籍页 */
+  .codex-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .codex-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .roadmap-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .roadmap-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .roadmap-stage {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .roadmap-content { flex: 1; }
+  .roadmap-name { font-size: 14px; font-weight: 700; }
+  .roadmap-desc { font-size: 12px; color: var(--ink-3); margin-top: 4px; line-height: 1.6; }
+  .roadmap-tags { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .roadmap-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0,255,136,.1);
+    color: var(--brand);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>⚡ 极客宗</h1>
+    <p>勤耕不辍 · 天道酬勤</p>
+  </div>
+
+  <div id="page-home">
+    <div class="coach-card">
+      <div class="coach-avatar">👨‍💻</div>
+      <div class="coach-info">
+        <div class="coach-name">码道人 <span class="coach-title">· 宗主</span></div>
+        <div class="coach-line" id="coach-line">"来了？今天的 LeetCode 刷了吗？"</div>
+      </div>
+    </div>
+    <div class="realm-card">
+      <div class="realm-top">
+        <div class="realm-badge" id="realm-badge">筑基</div>
+        <div class="realm-exp" id="realm-exp">修为 0</div>
+      </div>
+      <div class="exp-bar">
+        <div class="exp-fill" id="exp-fill" style="width: 0%"></div>
+      </div>
+      <div class="realm-desc" id="realm-desc">初入极客宗，Hello World 入门</div>
+    </div>
+
+    <div class="realm-card" style="border-color: rgba(139,92,246,.2); background: rgba(139,92,246,.05)">
+      <div class="realm-top">
+        <div class="realm-badge" style="border-color:#8b5cf6; color:#8b5cf6; background:rgba(139,92,246,.1)">🔗 GitHub 同步</div>
+        <div class="realm-exp" id="github-status">未绑定</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+        <input type="text" id="github-username" placeholder="输入你的 GitHub 用户名" style="flex:1;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:14px;outline:none">
+        <button class="btn btn-primary" style="flex:0;padding:10px 20px;font-size:13px" onclick="syncGithub()">同步</button>
+      </div>
+      <div class="realm-desc">绑定 GitHub 后，你的 PR 数将自动转换成 Commit 修为</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num" id="stat-streak">0</div>
+        <div class="stat-label">连续Commit</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-today">0</div>
+        <div class="stat-label">今日提交</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-wrong">0</div>
+        <div class="stat-label">Bug待除</div>
+      </div>
+    </div>
+    
+    <div class="section-title">今日修炼任务</div>
+    <div class="cat-list" style="margin-bottom: 24px;">
+      <div class="cat-card" onclick="startDailyQuestion()" style="border-color: var(--warning); background: rgba(255,184,77,.05)">
+        <div class="cat-icon" style="background: rgba(255,184,77,.2)">📅</div>
+        <div class="cat-meta">
+          <div class="cat-name">每日一题</div>
+          <div class="cat-desc">每日一题，额外 +20 修为奖励</div>
+        </div>
+        <div class="cat-count" id="daily-status">未完成</div>
+      </div>
+    </div>
+<div class="section-title">选择修炼区域</div>
+    <div class="cat-list" id="cat-list"></div>
+    <div class="section-title">进阶修炼</div>
+    <div class="feature-grid">
+      <div class="feature-card" onclick="showPage('wrong', this)">
+        <div class="feature-icon">🐛</div>
+        <div class="feature-title">Bug录</div>
+        <div class="feature-desc">错题复盘</div>
+      </div>
+      <div class="feature-card" onclick="showPage('chat', this)">
+        <div class="feature-icon">💬</div>
+        <div class="feature-title">请教宗主</div>
+        <div class="feature-desc">AI答疑解惑</div>
+      </div>
+      <div class="feature-card" onclick="startExam()">
+        <div class="feature-icon">⚔️</div>
+        <div class="feature-title">宗门大比</div>
+        <div class="feature-desc">模拟考试</div>
+      </div>
+      <div class="feature-card" onclick="showPage('report', this)">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">修炼报告</div>
+        <div class="feature-desc">学习数据统计</div>
+      </div>
+      <div class="feature-card" onclick="showPage('achievement', this)">
+        <div class="feature-icon">🏅</div>
+        <div class="feature-title">成就堂</div>
+        <div class="feature-desc">里程碑徽章</div>
+      </div>
+      <div class="feature-card" onclick="showPage('knowledge', this)">
+        <div class="feature-icon">🗺️</div>
+        <div class="feature-title">知识图谱</div>
+        <div class="feature-desc">修炼版图</div>
+      </div>
+      <div class="feature-card" onclick="showPage('codex', this)">
+        <div class="feature-icon">📜</div>
+        <div class="feature-title">宗门典籍</div>
+        <div class="feature-desc">修炼路线图</div>
+      </div>
+      <div class="feature-card" onclick="showPage('rank', this)">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">论道堂</div>
+        <div class="feature-desc">排行榜</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-quiz" style="display:none">
+    <div class="quiz-header">
+      <div class="quiz-progress" id="quiz-progress">第 1 / 30 题</div>
+      <button class="btn btn-ghost" style="flex:0;padding:8px 16px;font-size:13px" onclick="showPage('home', null)">返回</button>
+    </div>
+    <div class="quiz-bar">
+      <div class="quiz-bar-fill" id="quiz-bar-fill" style="width: 0%"></div>
+    </div>
+    <div class="question-card">
+      <div class="question-meta" id="question-meta"></div>
+      <div class="question-stem" id="question-stem"></div>
+      <div class="options" id="options"></div>
+      <div class="explain-box" id="explain-box" style="display:none"></div>
+    </div>
+    <div class="quiz-footer">
+      <button class="btn btn-ghost" id="btn-prev" onclick="prevQuestion()">上一题</button>
+      <button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()">提交答案</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" style="display:none">下一题</button>
+    </div>
+  </div>
+
+  <div id="page-wrong" style="display:none">
+    <div class="section-title">Bug录 · 待修复</div>
+    <div class="wrong-list" id="wrong-list"></div>
+  </div>
+
+  <div id="page-chat" style="display:none">
+    <div class="section-title">请教宗主 · 码道人</div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-bar">
+      <input type="text" class="chat-input" id="chat-input" placeholder="输入你的问题..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">↑</button>
+    </div>
+  </div>
+
+  
+  <!-- 模考设置页 -->
+  <div id="page-exam-setup" style="display:none">
+    <div class="section-title">宗门大比 · 选择试卷</div>
+    <div class="exam-setup">
+      <div class="exam-title">选择试炼类别</div>
+      <div class="exam-options" id="exam-cats"></div>
+    </div>
+    <div class="quiz-footer">
+      <button class="btn btn-primary" onclick="startExamNow()">开始试炼</button>
+    </div>
+  </div>
+
+  <!-- 模考结果页 -->
+  <div id="page-exam-result" style="display:none">
+    <div class="section-title">试炼结果</div>
+    <div class="exam-result-card">
+      <div class="result-grade" id="result-grade">甲</div>
+      <div class="result-score" id="result-score">85</div>
+      <div class="result-label">分 · 正确率</div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-num" style="color:var(--brand)" id="result-correct">32</div>
+          <div class="result-stat-label">答对</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num" style="color:var(--danger)" id="result-wrong">8</div>
+          <div class="result-stat-label">答错</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num" style="color:var(--brand-2)" id="result-time">42</div>
+          <div class="result-stat-label">用时(分钟)</div>
+        </div>
+      </div>
+      <div style="font-size:14px;color:var(--ink-2)" id="result-comment">宗主点评：尚可，继续修炼！</div>
+    </div>
+    <div class="quiz-footer">
+      <button class="btn btn-ghost" onclick="showPage('home', null)">返回首页</button>
+      <button class="btn btn-primary" onclick="showPage('wrong', null)">查看错题</button>
+    </div>
+  </div>
+
+  <!-- 学习报告页 -->
+  <div id="page-report" style="display:none">
+    <div class="section-title">修炼报告 · 码道人评点</div>
+    <div class="report-card">
+      <div class="report-title">📊 总览</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-box-num" id="report-total">0</div>
+          <div class="stat-box-label">累计刷题</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="report-acc">0%</div>
+          <div class="stat-box-label">正确率</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="report-streak">0</div>
+          <div class="stat-box-label">连续天数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="report-realm">筑基</div>
+          <div class="stat-box-label">当前境界</div>
+        </div>
+      </div>
+    </div>
+    <div class="report-card">
+      <div class="report-title">🎯 分类掌握度</div>
+      <div id="report-cats"></div>
+    </div>
+    <div class="report-card">
+      <div class="report-title">🐛 Bug分布</div>
+      <div id="report-wrong-topics"></div>
+    </div>
+    <div class="report-card">
+      <div class="report-title">💪 本周Commit趋势</div>
+      <div id="report-weekly"></div>
+    </div>
+    <div class="report-card">
+      <div class="report-title">📈 修为成长曲线</div>
+      <div id="growth-chart" style="height:150px;display:flex;align-items:flex-end;gap:4px"></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-top:8px">
+        <span>30天前</span>
+        <span>现在</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 成就页 -->
+  
+  <!-- 知识图谱页 -->
+  
+  <!-- 宗门典籍页 -->
+  <div id="page-codex" style="display:none">
+    <div class="section-title">📜 宗门典籍 · 修炼路线图</div>
+
+    <div class="codex-card">
+      <div class="codex-title">⚡ Agent 框架修炼路线</div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(0,255,136,.15);color:var(--brand)">1</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">筑基期：轻量入门</div>
+          <div class="roadmap-desc">从最简单的单 Agent 开始，理解工具调用、上下文管理、ReAct 循环</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">Smolagents</span>
+            <span class="roadmap-tag">OpenAI Agents SDK</span>
+            <span class="roadmap-tag">Claude Agent SDK</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(0,204,255,.15);color:var(--brand-2)">2</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">金丹期：多 Agent 协作</div>
+          <div class="roadmap-desc">角色分工、任务委派、对话式协作，理解 Crew / Team 模式</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">CrewAI</span>
+            <span class="roadmap-tag">AutoGen/AG2</span>
+            <span class="roadmap-tag">MetaGPT</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(168,85,247,.15);color:#a855f7">3</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">元婴期：生产级编排</div>
+          <div class="roadmap-desc">图状态机、持久化检查点、人在回路、可观测性，生产环境部署</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">LangGraph</span>
+            <span class="roadmap-tag">Google ADK</span>
+            <span class="roadmap-tag">Pydantic AI</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(255,184,77,.15);color:var(--warning)">4</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">化神期：Harness 定制</div>
+          <div class="roadmap-desc">Agent 运行框架定制化，插件系统、多模型路由、沙箱执行</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">DeepSeek Harness</span>
+            <span class="roadmap-tag">Claude Code Mods</span>
+            <span class="roadmap-tag">MCP 协议</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(255,107,107,.15);color:var(--danger)">5</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">飞升期：RSI 递归自进化</div>
+          <div class="roadmap-desc">Agent 自主改进自身、构建记忆、探索环境，自我迭代闭环</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">RSIAgent</span>
+            <span class="roadmap-tag">Dream-RSI</span>
+            <span class="roadmap-tag">NeoHorse-1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="codex-card">
+      <div class="codex-title">🧠 后训练技术修炼路线</div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(0,255,136,.15);color:var(--brand)">1</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">推理 RL：从 CoT 到 R1</div>
+          <div class="roadmap-desc">SFT 冷启动 → RL 激发推理涌现，Aha Moment 现象</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">GRPO</span>
+            <span class="roadmap-tag">DeepSeek-R1</span>
+            <span class="roadmap-tag">DAPO</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(0,204,255,.15);color:var(--brand-2)">2</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">OPD：On-Policy 蒸馏</div>
+          <div class="roadmap-desc">on-policy 采样 × per-token 蒸馏，信号密度是纯 RL 的 50-100 倍，2026 事实标准</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">MiMo-V2</span>
+            <span class="roadmap-tag">GLM-5</span>
+            <span class="roadmap-tag">DeepSeek-V4</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="roadmap-stage" style="background:rgba(168,85,247,.15);color:#a855f7">3</div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">Agentic RL：多轮长程训练</div>
+          <div class="roadmap-desc">工具调用、长程信用分配、多轮对话、异步流水线训练框架</div>
+          <div class="roadmap-tags">
+            <span class="roadmap-tag">GiGPO</span>
+            <span class="roadmap-tag">ARPO</span>
+            <span class="roadmap-tag">verl / AReal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="codex-card">
+      <div class="codex-title">🎯 八股文 & 算法修炼</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:rgba(255,255,255,.03);padding:16px;border-radius:12px">
+          <div style="font-weight:700;margin-bottom:8px">📚 算法修炼</div>
+          <div style="font-size:12px;color:var(--ink-3);line-height:1.8">
+            • 数据结构：树/图/哈希/堆<br>
+            • 动态规划：背包/区间/状态机<br>
+            • 图论：最短路径/拓扑/并查集<br>
+            • 复杂度分析 & 贪心
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.03);padding:16px;border-radius:12px">
+          <div style="font-weight:700;margin-bottom:8px">📖 数据库八股</div>
+          <div style="font-size:12px;color:var(--ink-3);line-height:1.8">
+            • 索引：B+树/聚簇/覆盖/最左前缀<br>
+            • 事务：ACID/MVCC/隔离级别<br>
+            • 锁：行锁/表锁/间隙锁<br>
+            • Redis：持久化/数据结构/分布式锁
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="codex-card">
+      <div class="codex-title">🏗️ 系统设计思维修炼</div>
+      <div style="font-size:13px;line-height:1.8;color:var(--ink-2);margin-bottom:16px">
+        系统设计不是背答案，而是<b>从需求到架构的推导过程</b>。掌握以下思维模型：
+      </div>
+
+      <div style="background:rgba(0,255,136,.05);padding:16px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:700;color:var(--brand);margin-bottom:8px">📐 四步设计法</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:1.8">
+          1. <b>需求澄清</b>：功能需求 + 非功能需求（QPS/延迟/可用性）<br>
+          2. <b>容量估算</b>：读QPS/写QPS/存储量/带宽<br>
+          3. <b>高层设计</b>：客户端→网关→服务→存储，画核心组件<br>
+          4. <b>深入设计</b>：选数据结构、设计API、扩展性、容错
+        </div>
+      </div>
+
+      <div style="background:rgba(0,204,255,.05);padding:16px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:700;color:var(--brand-2);margin-bottom:8px">🔑 核心设计权衡</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:1.8">
+          • <b>CAP</b>：分布式系统选CP还是AP？<br>
+          • <b>缓存 vs DB</b>：读多写少用缓存，写多了要考虑一致性<br>
+          • <b>同步 vs 异步</b>：同步简单但慢，异步快但复杂<br>
+          • <b>强一致 vs 最终一致</b>：金融要强一致，社交可以最终一致
+        </div>
+      </div>
+
+      <div style="background:rgba(255,184,77,.05);padding:16px;border-radius:12px">
+        <div style="font-weight:700;color:var(--warning);margin-bottom:8px">🧩 必练经典题</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:1.8">
+          1. 设计短链接系统<br>
+          2. 设计秒杀系统<br>
+          3. 设计Feed流（微博/朋友圈）<br>
+          4. 设计分布式ID生成器<br>
+          5. 设计限流器<br>
+          6. 设计排行榜（Redis ZSet）<br>
+          7. 设计消息队列<br>
+          8. 设计文件系统（网盘）<br>
+          9. 设计支付系统<br>
+          10. 设计分布式爬虫
+        </div>
+      </div>
+    </div>
+
+    <div class="codex-card">
+      <div class="codex-title">🔥 2026 热门开源项目贡献路线</div>
+      <div style="font-size:13px;line-height:1.8;color:var(--ink-2);margin-bottom:16px">
+        从 Good First Issue 开始，逐步深入核心模块，每贡献一个PR都是一次修为提升！
+      </div>
+
+      <div style="background:rgba(0,255,136,.05);padding:16px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:700;color:var(--brand);margin-bottom:8px">🌱 入门级（适合刚上手）</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:2">
+          • <b>Dify</b>（144K星）：低代码Agent平台，文档完善，issue友好<br>
+          • <b>Langflow</b>：可视化LLM流程编排，前端/文档任务多<br>
+          • <b>Flowise</b>：拖拽式AI workflow，TS项目，适合前端同学<br>
+          • <b>Awesome-LLM</b>：各种教程、示例项目，先从写文档开始
+        </div>
+      </div>
+
+      <div style="background:rgba(0,204,255,.05);padding:16px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:700;color:var(--brand-2);margin-bottom:8px">⚔️ 进阶级（有一定基础）</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:2">
+          • <b>LangGraph</b>（34M月下载）：生产级Agent编排，图状态机<br>
+          • <b>CrewAI</b>：多Agent协作框架，角色分工模式<br>
+          • <b>AutoGen/AG2</b>：微软多Agent框架，研究向<br>
+          • <b>Smolagents</b>：HuggingFace极简Agent，代码量小易读
+        </div>
+      </div>
+
+      <div style="background:rgba(168,85,247,.05);padding:16px;border-radius:12px">
+        <div style="font-weight:700;color:#a855f7;margin-bottom:8px">🚀 前沿级（挑战RSI方向）</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:2">
+          • <b>DeepSeek Harness</b>（229K星）：一切皆插件的Agent运行框架<br>
+          • <b>OpenClaw</b>（390K星）：最火的OSS Agent框架<br>
+          • <b>RSIAgent</b>：递归自进化Agent框架，学术+工业结合<br>
+          • <b>browser-use</b>：浏览器自动化Agent，115K星，方向火
+        </div>
+      </div>
+    </div>
+
+  </div>
+<div id="page-knowledge" style="display:none">
+    <div class="section-title">🗺️ 知识图谱 · 你的修炼版图</div>
+    <div class="report-card">
+      <div class="report-title">🎯 知识点掌握度</div>
+      <div id="km-topics"></div>
+    </div>
+    <div class="report-card">
+      <div class="report-title">⚠️ 薄弱知识点</div>
+      <div id="km-weak"></div>
+    </div>
+  </div>
+<div id="page-achievement" style="display:none">
+    <div class="section-title">🏅 成就堂 · 里程碑</div>
+    <div class="ach-grid" id="ach-list"></div>
+  </div>
+<div id="page-rank" style="display:none">
+    <div class="section-title">论道堂 · 排行榜</div>
+    <div class="cat-list" id="rank-list"></div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab-item active" onclick="showPage('home', this)">
+    <div class="tab-icon">🏠</div>
+    首页
+  </div>
+  <div class="tab-item" onclick="showPage('wrong', this)">
+    <div class="tab-icon">🐛</div>
+    Bug录
+  </div>
+  <div class="tab-item" onclick="showPage('chat', this)">
+    <div class="tab-icon">💬</div>
+    宗主
+  </div>
+  <div class="tab-item" onclick="showPage('rank', this)">
+    <div class="tab-icon">🏆</div>
+    论道
+  </div>
+</div>
+
+<script>
+const API = '';
+let userId = localStorage.getItem('geek_uid') || 'demo_' + Date.now().toString(36);
+let exp = parseInt(localStorage.getItem('geek_exp') || '0');
+let streak = parseInt(localStorage.getItem('geek_streak') || '0');
+let currentQuestions = [];
+let currentQIndex = 0;
+let selectedOptions = [];
+let answered = false;
+
+const REALMS = [
+  { min: 0, name: '筑基', desc: '初入极客宗，Hello World 入门', color: '#94a3b8' },
+  { min: 50, name: '金丹', desc: '略通语法，可解简单算法题', color: '#22c55e' },
+  { min: 150, name: '元婴', desc: '算法贯通，小有所成', color: '#3b82f6' },
+  { min: 300, name: '化神', desc: '才学兼备，可任 Tech Lead', color: '#a855f7' },
+  { min: 500, name: '渡劫', desc: '架构大师，大厂架构师水平', color: '#f59e0b' },
+  { min: 800, name: '飞升', desc: '学究天人，一代 CTO', color: '#ef4444' }
+];
+
+const CATS = [
+  { key: '考研', name: '考研', emoji: '🎓', desc: '数学·英语·政治·专业课', color: '#3b82f6' },
+  { key: '考公', name: '考公', emoji: '🏛️', desc: '行测·申论·常识判断', color: '#10b981' },
+  { key: '大厂', name: '大厂', emoji: '💻', desc: '算法·系统·前端·后端', color: '#8b5cf6' }
+];
+
+const GREETINGS = [
+  '来了？今天的 LeetCode 刷了吗？',
+  '别磨蹭，编译不等人。',
+  '又来偷懒？昨天的 bug 复盘了？',
+  '嗯，今日提交记录尚可，可一战。',
+  '既入极客宗，便没有半途而废的道理。'
+];
+
+function getCurrentRealm() {
+  let cur = REALMS[0];
+  for (const r of REALMS) if (exp >= r.min) cur = r;
+  return cur;
+}
+
+function renderHome() {
+  const realm = getCurrentRealm();
+  document.getElementById('realm-badge').textContent = realm.name;
+  document.getElementById('realm-exp').textContent = '修为 ' + exp;
+  document.getElementById('realm-desc').textContent = realm.desc;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('stat-today').textContent = getTodayCount();
+  document.getElementById('coach-line').textContent = '"' + GREETINGS[Math.floor(Math.random() * GREETINGS.length)] + '"';
+  const nextRealm = REALMS.find(r => r.min > exp);
+  if (nextRealm) {
+    const curIdx = REALMS.indexOf(realm);
+    const range = nextRealm.min - REALMS[curIdx].min;
+    const done = exp - REALMS[curIdx].min;
+    document.getElementById('exp-fill').style.width = Math.min(100, done / range * 100) + '%';
+  } else {
+    document.getElementById('exp-fill').style.width = '100%';
+  }
+}
+
+function getTodayCount() {
+  const key = 'geek_done_' + new Date().toISOString().slice(0,10);
+  return localStorage.getItem(key) || 0;
+}
+
+function addTodayCount(n) {
+  const key = 'geek_done_' + new Date().toISOString().slice(0,10);
+  localStorage.setItem(key, parseInt(localStorage.getItem(key) || '0') + n);
+}
+
+function renderCats() {
+  document.getElementById('cat-list').innerHTML = CATS.map(c => `
+    <div class="cat-card" onclick="startQuiz('${c.key}')">
+      <div class="cat-icon" style="background:${c.color}22">${c.emoji}</div>
+      <div class="cat-meta">
+        <div class="cat-name">${c.name}历练</div>
+        <div class="cat-desc">${c.desc}</div>
+      </div>
+      <div class="cat-count">→</div>
+    </div>
+  `).join('');
+}
+
+function showPage(page, tabEl) {
+  document.querySelectorAll('[id^="page-"]').forEach(p => p.style.display = 'none');
+  document.getElementById('page-' + page).style.display = 'block';
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+  if (page === 'wrong') loadWrong();
+  if (page === 'rank') loadRank();
+  if (page === 'report') loadReport();
+  if (page === 'achievement') loadAchievements();
+  if (page === 'knowledge') loadKnowledgeMap();
+  if (page === 'chat') initChat();
+  if (page === 'home') renderHome();
+}
+
+function parseQuestion(q) {
+  return {
+    ...q,
+    opts: typeof q.opts === 'string' ? JSON.parse(q.opts) : q.opts,
+    answer: typeof q.answer === 'string' ? JSON.parse(q.answer) : q.answer
+  };
+}
+
+
+let dailyDone = localStorage.getItem('geek_daily_' + new Date().toISOString().slice(0,10)) === 'done';
+
+function checkDailyStatus() {
+  const today = new Date().toISOString().slice(0,10);
+  dailyDone = localStorage.getItem('geek_daily_' + today) === 'done';
+  const el = document.getElementById('daily-status');
+  if (el) el.textContent = dailyDone ? '✓ 已完成' : '未完成';
+}
+
+
+async function syncGithub() {
+  const username = document.getElementById('github-username').value.trim();
+  if (!username) {
+    alert('请输入 GitHub 用户名！');
+    return;
+  }
+  try {
+    // 调用 GitHub API 获取用户公开 PR 数
+    const res = await fetch(`https://api.github.com/search/issues?q=author:${username}+type:pr`);
+    const data = await res.json();
+    const prCount = data.total_count || 0;
+
+    // 保存绑定信息
+    localStorage.setItem('geek_github_user', username);
+    localStorage.setItem('geek_github_pr_count', prCount);
+
+    // 计算修为奖励：每个 PR 加 5 修为
+    const oldPrCount = parseInt(localStorage.getItem('geek_github_pr_old') || '0');
+    const newPrReward = (prCount - oldPrCount) * 5;
+    if (newPrReward > 0) {
+      exp += newPrReward;
+      localStorage.setItem('geek_exp', exp);
+      showToast(`同步成功！+${newPrReward} 修为（${prCount} 个 PR）`);
+    } else {
+      showToast(`同步成功！共 ${prCount} 个 PR`);
+    }
+    localStorage.setItem('geek_github_pr_old', prCount);
+
+    document.getElementById('github-status').textContent = '@' + username;
+    renderHome();
+  } catch (e) {
+    alert('GitHub 同步失败：' + e.message);
+  }
+}
+
+function checkGithubBinding() {
+  const username = localStorage.getItem('geek_github_user');
+  if (username) {
+    document.getElementById('github-status').textContent = '@' + username;
+    document.getElementById('github-username').value = username;
+  }
+}
+
+async function startDailyQuestion() {
+  showPage('quiz', null);
+  try {
+    const res = await fetch(API + '/api/questions/sample?limit=1');
+    const data = await res.json();
+    currentQuestions = data.map(parseQuestion);
+    currentQIndex = 0;
+    renderQuestion();
+    // 标记是每日一题模式
+    window.dailyMode = true;
+  } catch (e) {
+    alert('加载失败: ' + e.message);
+    showPage('home', null);
+  }
+}
+
+
+async function startWrongReview() {
+  showPage('quiz', null);
+  try {
+    const res = await fetch(API + '/api/wrong-book/' + userId);
+    const data = await res.json();
+    if (!data.length) {
+      alert('Bug录是空的，继续保持！');
+      showPage('wrong', null);
+      return;
+    }
+    currentQuestions = data.map(w => parseQuestion(w.question));
+    currentQIndex = 0;
+    window.wrongReviewMode = true;
+    renderQuestion();
+  } catch (e) {
+    alert('加载失败: ' + e.message);
+    showPage('wrong', null);
+  }
+}
+
+async function startQuiz(cat) {
+  showPage('quiz', null);
+  try {
+    const res = await fetch(API + '/api/questions/sample?cat=' + encodeURIComponent(cat) + '&limit=30');
+    const data = await res.json();
+    currentQuestions = data.map(parseQuestion);
+    currentQIndex = 0;
+    renderQuestion();
+  } catch (e) {
+    alert('加载失败: ' + e.message);
+    showPage('home', null);
+  }
+}
+
+function renderQuestion() {
+  const q = currentQuestions[currentQIndex];
+  if (!q) return;
+  answered = false;
+  selectedOptions = new Array(q.opts.length).fill(false);
+  document.getElementById('quiz-progress').textContent = `第 ${currentQIndex + 1} / ${currentQuestions.length} 题`;
+  document.getElementById('quiz-bar-fill').style.width = ((currentQIndex + 1) / currentQuestions.length * 100) + '%';
+  document.getElementById('btn-prev').disabled = currentQIndex === 0;
+  document.getElementById('btn-prev').style.opacity = currentQIndex === 0 ? 0.5 : 1;
+  document.getElementById('btn-submit').style.display = 'block';
+  document.getElementById('btn-next').style.display = 'none';
+  const diffMap = { easy: '简单', medium: '中等', hard: '困难' };
+  document.getElementById('question-meta').innerHTML = `
+    <span class="tag tag-cat">${q.cat}</span>
+    <span class="tag tag-diff">${diffMap[q.difficulty] || q.difficulty}</span>
+    <span class="tag tag-type">${q.type}</span>
+  `;
+  document.getElementById('question-stem').textContent = q.stem;
+  document.getElementById('explain-box').style.display = 'none';
+  document.getElementById('options').innerHTML = q.opts.map((opt, i) => `
+    <div class="option" data-i="${i}" onclick="selectOption(${i})">
+      <div class="option-label">${String.fromCharCode(65 + i)}</div>
+      <div class="option-text">${opt}</div>
+    </div>
+  `).join('');
+}
+
+function selectOption(i) {
+  if (answered) return;
+  const q = currentQuestions[currentQIndex];
+  if (q.type === '多选题') {
+    selectedOptions[i] = !selectedOptions[i];
+  } else {
+    selectedOptions = selectedOptions.map((_, idx) => idx === i);
+  }
+  document.querySelectorAll('.option').forEach((el, idx) => {
+    el.classList.toggle('selected', selectedOptions[idx]);
+  });
+}
+
+function submitAnswer() {
+  if (answered) return;
+  const q = currentQuestions[currentQIndex];
+  const picked = selectedOptions.map((s, i) => s ? i : -1).filter(i => i >= 0).sort();
+  const ans = q.answer.slice().sort();
+  const correct = JSON.stringify(picked) === JSON.stringify(ans);
+  answered = true;
+  document.querySelectorAll('.option').forEach((el, idx) => {
+    el.classList.remove('selected');
+    if (q.answer.includes(idx)) el.classList.add('correct');
+    else if (selectedOptions[idx]) el.classList.add('wrong');
+  });
+  document.getElementById('explain-box').style.display = 'block';
+  document.getElementById('explain-box').innerHTML = `<strong style="color:var(--brand)">💡 解析：</strong>${q.explain}`;
+  if (correct) {
+    exp += 10;
+    localStorage.setItem('geek_exp', exp);
+    showToast('✓ 正确！+10 修为');
+  } else {
+    showToast('✗ 错误，已加入Bug录');
+    fetch(API + '/api/wrong-book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, question_id: q.id })
+    }).catch(() => {});
+  }
+  addTodayCount(1);
+  renderHome();
+  document.getElementById('btn-submit').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+function prevQuestion() {
+  if (currentQIndex > 0) {
+    currentQIndex--;
+    renderQuestion();
+  }
+}
+
+function nextQuestion() {
+  if (currentQIndex < currentQuestions.length - 1) {
+    currentQIndex++;
+    renderQuestion();
+  } else {
+    if (window.examMode) {
+      submitExam();
+    } else {
+      showToast('本轮完成！');
+      showPage('home', null);
+    }
+  }
+}
+
+async function loadWrong() {
+  try {
+    const res = await fetch(API + '/api/wrong-book/' + userId);
+    const data = await res.json();
+    const list = document.getElementById('wrong-list');
+    if (!data.length) {
+      list.innerHTML = '<div style="text-align:center;color:var(--ink-3);padding:40px">暂无Bug记录，继续保持！</div>';
+      return;
+    }
+    list.innerHTML = data.map(w => `
+      <div class="wrong-item">
+        <div class="wrong-stem">${w.question?.stem || '错题'}</div>
+        <div class="wrong-meta">${w.question?.cat || ''} · ${w.question?.topic || ''}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    document.getElementById('wrong-list').innerHTML = '<div style="color:var(--danger)">加载失败</div>';
+  }
+}
+
+
+function initChat() {
+  const messages = document.getElementById('chat-messages');
+  if (messages.children.length === 0) {
+    messages.innerHTML = `
+      <div class="msg msg-bot">👨‍💻 欢迎来到极客宗！我是码道人，有什么修炼上的困惑尽管问。</div>
+    `;
+  }
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  const messages = document.getElementById('chat-messages');
+  messages.innerHTML += `<div class="msg msg-user">${text}</div>`;
+  messages.scrollTop = messages.scrollHeight;
+  try {
+    const res = await fetch(API + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: '你是极客宗宗主码道人，毒舌但护短的AI导师。用程序员黑话风格回答问题。',
+        messages: [{ role: 'user', content: text }]
+      })
+    });
+    const data = await res.json();
+    messages.innerHTML += `<div class="msg msg-bot">${data.reply || '暂无回复'}</div>`;
+    messages.scrollTop = messages.scrollHeight;
+  } catch (e) {
+    messages.innerHTML += `<div class="msg msg-bot">网络开小差了...</div>`;
+  }
+}
+
+
+
+
+async function loadKnowledgeMap() {
+  // 模拟数据（实际应该从后端错题统计）
+  const topics = [
+    { name: '数据结构', mastered: 85 },
+    { name: '算法设计', mastered: 72 },
+    { name: '操作系统', mastered: 68 },
+    { name: '计算机网络', mastered: 90 },
+    { name: '数据库', mastered: 55 },
+    { name: '系统设计', mastered: 45 },
+    { name: '前端基础', mastered: 78 },
+    { name: '后端开发', mastered: 60 },
+  ];
+
+  // 掌握度排序
+  topics.sort((a, b) => b.mastered - a.mastered);
+
+  document.getElementById('km-topics').innerHTML = topics.map(t => `
+    <div class="topic-bar">
+      <div class="topic-name">${t.name}</div>
+      <div class="topic-bar-bg">
+        <div class="topic-bar-fill" style="width: ${t.mastered}%; background: ${t.mastered >= 80 ? 'linear-gradient(90deg, #00ff88, #00ccff)' : t.mastered >= 60 ? 'linear-gradient(90deg, #ffb84d, #ff9800)' : 'linear-gradient(90deg, #ff6b6b, #ff4444)'}"></div>
+      </div>
+      <div class="topic-pct">${t.mastered}%</div>
+    </div>
+  `).join('');
+
+  // 薄弱知识点
+  const weakTopics = topics.filter(t => t.mastered < 60);
+  if (weakTopics.length === 0) {
+    document.getElementById('km-weak').innerHTML = '<div style="text-align:center;color:var(--ink-3);padding:20px">暂无薄弱知识点，继续保持！</div>';
+  } else {
+    document.getElementById('km-weak').innerHTML = weakTopics.map(t => `
+      <div class="cat-card" style="margin-bottom:8px">
+        <div class="cat-icon" style="background:rgba(255,107,107,.15)">⚠️</div>
+        <div class="cat-meta">
+          <div class="cat-name">${t.name}</div>
+          <div class="cat-desc">掌握度仅 ${t.mastered}%，建议多刷相关题目</div>
+        </div>
+        <div class="cat-count" style="color:var(--danger)">待提升</div>
+      </div>
+    `).join('');
+  }
+}
+
+const ACHIEVEMENTS = [
+  { id: 'first_commit', name: 'Hello World', desc: '完成第一次刷题', icon: '🌱', check: () => parseInt(localStorage.getItem('geek_total_done') || '0') >= 1 },
+  { id: 'ten_commit', name: '入门者', desc: '累计刷题10道', icon: '📝', check: () => parseInt(localStorage.getItem('geek_total_done') || '0') >= 10 },
+  { id: 'hundred_commit', name: '勤奋修炼', desc: '累计刷题100道', icon: '💪', check: () => parseInt(localStorage.getItem('geek_total_done') || '0') >= 100 },
+  { id: 'thousand_commit', name: '刷题狂魔', desc: '累计刷题1000道', icon: '🔥', check: () => parseInt(localStorage.getItem('geek_total_done') || '0') >= 1000 },
+  { id: 'seven_streak', name: '七日之痒', desc: '连续打卡7天', icon: '📅', check: () => streak >= 7 },
+  { id: 'thirty_streak', name: '月度坚持', desc: '连续打卡30天', icon: '⏰', check: () => streak >= 30 },
+  { id: 'first_daily', name: '每日一题', desc: '完成第一次每日一题', icon: '✨', check: () => localStorage.getItem('geek_daily_done') === 'true' },
+  { id: 'exam_pass', name: '初入宗门', desc: '宗门大比及格', icon: '⚔️', check: () => localStorage.getItem('geek_exam_pass') === 'true' },
+  { id: 'first_realm', name: '筑基成功', desc: '达到金丹境界', icon: '⭐', check: () => exp >= 50 },
+  { id: 'master_realm', name: '化神大成', desc: '达到化神境界', icon: '👑', check: () => exp >= 300 },
+];
+
+function loadAchievements() {
+  const unlocked = new Set(JSON.parse(localStorage.getItem('geek_achievements') || '[]'));
+  document.getElementById('ach-list').innerHTML = ACHIEVEMENTS.map(ach => {
+    const isUnlocked = unlocked.has(ach.id) || ach.check();
+    if (isUnlocked && !unlocked.has(ach.id)) {
+      unlocked.add(ach.id);
+      localStorage.setItem('geek_achievements', JSON.stringify([...unlocked]));
+    }
+    return `
+      <div class="ach-card ${isUnlocked ? 'unlocked' : ''}">
+        <div class="ach-icon">${ach.icon}</div>
+        <div class="ach-name">${ach.name}</div>
+        <div class="ach-desc">${ach.desc}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function loadReport() {
+  // 模拟数据（实际应该从后端拿）
+  const totalQuestions = parseInt(localStorage.getItem('geek_total_done') || '0');
+  const totalCorrect = parseInt(localStorage.getItem('geek_total_correct') || '0');
+  const acc = totalQuestions > 0 ? Math.round(totalCorrect / totalQuestions * 100) : 0;
+
+  document.getElementById('report-total').textContent = totalQuestions;
+  document.getElementById('report-acc').textContent = acc + '%';
+  document.getElementById('report-streak').textContent = streak;
+  document.getElementById('report-realm').textContent = getCurrentRealm().name;
+
+  // 分类掌握度（模拟数据，实际从后端错题统计）
+  document.getElementById('report-cats').innerHTML = CATS.map((cat, i) => {
+    const pct = 60 + Math.floor(Math.random() * 35);
+    return `
+      <div class="topic-bar">
+        <div class="topic-name">${cat.name}</div>
+        <div class="topic-bar-bg">
+          <div class="topic-bar-fill" style="width: ${pct}%"></div>
+        </div>
+        <div class="topic-pct">${pct}%</div>
+      </div>
+    `;
+  }).join('');
+
+  // Bug分布
+  document.getElementById('report-wrong-topics').innerHTML = `
+    <div style="text-align:center;color:var(--ink-3);padding:20px">
+      暂无足够数据，继续刷题积累 Bug 记录后可分析
+    </div>
+  `;
+
+  // 本周Commit趋势
+  const days = ['一','二','三','四','五','六','日'];
+  const today = new Date().getDay();
+  let barsHtml = '';
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = 'geek_done_' + d.toISOString().slice(0,10);
+    const count = parseInt(localStorage.getItem(key) || '0');
+    const h = Math.min(100, count * 10);
+    const dayLabel = i === 0 ? '今天' : '周' + days[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    barsHtml += `
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="font-size:10px;color:var(--ink-3);margin-bottom:4px">${count}题</div>
+        <div style="width:24px;height:${Math.max(8, h)}px;background:linear-gradient(180deg, var(--brand), var(--brand-2));border-radius:4px 4px 0 0"></div>
+        <div style="font-size:10px;color:var(--ink-3);margin-top:4px">${dayLabel}</div>
+      </div>
+    `;
+  }
+  document.getElementById('report-weekly').innerHTML = `
+    <div style="display:flex;gap:8px;align-items:flex-end;height:100px">${barsHtml}</div>
+  `;
+
+  // 修为成长曲线（模拟30天数据）
+  let growthHtml = '';
+  let baseExp = Math.max(0, exp - 300);
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = 'geek_done_' + d.toISOString().slice(0,10);
+    const todayExp = parseInt(localStorage.getItem(key) || '0') * 10;
+    baseExp += todayExp;
+    const h = Math.min(100, baseExp / 10);
+    const isToday = i === 0;
+    growthHtml += `
+      <div style="flex:1;height:${Math.max(4, h)}px;background:linear-gradient(180deg, var(--brand), var(--brand-2));border-radius:2px 2px 0 0;${isToday ? 'box-shadow:0 0 8px var(--brand)' : ''}"></div>
+    `;
+  }
+  document.getElementById('growth-chart').innerHTML = growthHtml;
+}
+
+function loadRank() {
+  const rankData = [
+    { rank: 1, name: 'Bug终结者', realm: '飞升', exp: 980, avatar: '👑' },
+    { rank: 2, name: '代码诗人', realm: '渡劫', exp: 760, avatar: '🎨' },
+    { rank: 3, name: '算法狂魔', realm: '渡劫', exp: 680, avatar: '⚡' },
+    { rank: 4, name: '架构大师', realm: '化神', exp: 520, avatar: '🏗️' },
+    { rank: 5, name: '你', realm: '筑基', exp: exp, avatar: '🧑‍💻', isSelf: true },
+    { rank: 6, name: 'CR战神', realm: '金丹', exp: 98, avatar: '🔍' },
+  ];
+  document.getElementById('rank-list').innerHTML = rankData.map(r => `
+    <div class="cat-card" style="${r.isSelf ? 'border-color:var(--brand)' : ''}">
+      <div class="cat-icon">${r.avatar}</div>
+      <div class="cat-meta">
+        <div class="cat-name">${r.name}</div>
+        <div class="cat-desc">${r.realm} · 修为 ${r.exp}</div>
+      </div>
+      <div class="cat-count">#${r.rank}</div>
+    </div>
+  `).join('');
+}
+
+let examSelectedCat = null;
+let examStartTime = 0;
+let examAnswers = [];
+let examTimerInterval = null;
+
+function startExam() {
+  showPage('exam-setup', null);
+  document.getElementById('exam-cats').innerHTML = CATS.map(c => `
+    <div class="exam-option" data-cat="${c.key}" onclick="selectExamCat('${c.key}', this)">
+      <div class="exam-option-name">${c.emoji} ${c.name}大比</div>
+      <div class="exam-option-desc">50题 · 90分钟 · 正确率≥60% 才算合格</div>
+    </div>
+  `).join('');
+}
+
+function selectExamCat(cat, el) {
+  examSelectedCat = cat;
+  document.querySelectorAll('.exam-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function startExamNow() {
+  if (!examSelectedCat) {
+    alert('请先选择试炼类别！');
+    return;
+  }
+  showPage('quiz', null);
+  try {
+    const res = await fetch(API + '/api/questions/sample?cat=' + encodeURIComponent(examSelectedCat) + '&limit=50');
+    const data = await res.json();
+    currentQuestions = data.map(parseQuestion);
+    currentQIndex = 0;
+    examAnswers = new Array(currentQuestions.length).fill(null);
+    examStartTime = Date.now();
+    window.examMode = true;
+
+    // 启动计时器
+    let timeLeft = 90 * 60;
+    if (examTimerInterval) clearInterval(examTimerInterval);
+    examTimerInterval = setInterval(() => {
+      timeLeft--;
+      const m = Math.floor(timeLeft / 60);
+      const s = timeLeft % 60;
+      let timerEl = document.getElementById('exam-timer');
+      if (!timerEl) {
+        timerEl = document.createElement('div');
+        timerEl.id = 'exam-timer';
+        timerEl.className = 'exam-timer';
+        document.body.appendChild(timerEl);
+      }
+      timerEl.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+      if (timeLeft <= 0) {
+        clearInterval(examTimerInterval);
+        submitExam();
+      }
+    }, 1000);
+
+    renderQuestion();
+  } catch (e) {
+    alert('加载失败: ' + e.message);
+    showPage('home', null);
+  }
+}
+
+function submitExam() {
+  if (examTimerInterval) clearInterval(examTimerInterval);
+  const timerEl = document.getElementById('exam-timer');
+  if (timerEl) timerEl.remove();
+
+  let correct = 0;
+  let answeredCount = 0;
+  examAnswers.forEach((ans, i) => {
+    if (ans !== null) {
+      answeredCount++;
+      const q = currentQuestions[i];
+      const ansArr = ans.sort();
+      const rightArr = q.answer.slice().sort();
+      if (JSON.stringify(ansArr) === JSON.stringify(rightArr)) correct++;
+    }
+  });
+
+  const score = Math.round(correct / currentQuestions.length * 100);
+  const usedTime = Math.round((Date.now() - examStartTime) / 60000);
+
+  // 更新修为
+  const expGain = Math.round(score / 10);
+  exp += expGain;
+  localStorage.setItem('geek_exp', exp);
+
+  // 评级
+  let grade, comment;
+  if (score >= 90) { grade = '甲上'; comment = '宗主点评：天资卓越，可入真传弟子之列！'; }
+  else if (score >= 80) { grade = '甲'; comment = '宗主点评：不错！略有疏漏，再细一点便完美。'; }
+  else if (score >= 70) { grade = '乙'; comment = '宗主点评：尚可，基础尚可，细节仍需打磨。'; }
+  else if (score >= 60) { grade = '丙'; comment = '宗主点评：刚过及格线，回去多刷几道题再来！'; }
+  else { grade = '丁'; comment = '宗主点评：哎...出去别说你是我极客宗的人。'; }
+
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-grade').style.color = score >= 60 ? 'var(--brand)' : 'var(--danger)';
+  document.getElementById('result-score').textContent = score;
+  document.getElementById('result-correct').textContent = correct;
+  document.getElementById('result-wrong').textContent = currentQuestions.length - correct;
+  document.getElementById('result-time').textContent = usedTime;
+  document.getElementById('result-comment').textContent = comment;
+
+  window.examMode = false;
+  showPage('exam-result', null);
+  renderHome();
+}
+
+function reviewWrong() {
+  showPage('wrong', null);
+}
+
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1500);
+}
+
+renderHome();
+renderCats();
+checkDailyStatus();
+checkGithubBinding();
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+﻿<!--pages/wrong/wrong.wxml · Bug录-->
+<view class="page">
+  <view class="head">
+    <view class="h-title">Bug录</view>
+    <view class="h-sub">修行路上的Bug · 逐一破除方能精进</view>
+  </view>
+
+  <!-- Bug统计概览 -->
+  <view class="overview" wx:if="{{list.length}}">
+    <view class="ov-item">
+      <view class="ov-num">{{list.length}}</view>
+      <view class="ov-label">Bug总数</view>
+    </view>
+    <view class="ov-divider"></view>
+    <view class="ov-item">
+      <view class="ov-num">3</view>
+      <view class="ov-label">高危Bug</view>
+    </view>
+    <view class="ov-divider"></view>
+    <view class="ov-item">
+      <view class="ov-num">85%</view>
+      <view class="ov-label">可破除率</view>
+    </view>
+  </view>
+
+  <!-- 错误类型分布（模拟） -->
+  <view class="type-chart" wx:if="{{list.length}}">
+    <view class="chart-title">Bug类型分布</view>
+    <view class="chart-bar">
+      <view class="bar-item">
+        <view class="bar-label">概念模糊</view>
+        <view class="bar-track">
+          <view class="bar-fill" style="width:45%;background:#ef4444;"></view>
+        </view>
+        <view class="bar-num">45%</view>
+      </view>
+      <view class="bar-item">
+        <view class="bar-label">计算失误</view>
+        <view class="bar-track">
+          <view class="bar-fill" style="width:30%;background:#f59e0b;"></view>
+        </view>
+        <view class="bar-num">30%</view>
+      </view>
+      <view class="bar-item">
+        <view class="bar-label">审题不清</view>
+        <view class="bar-track">
+          <view class="bar-fill" style="width:15%;background:#3b82f6;"></view>
+        </view>
+        <view class="bar-num">15%</view>
+      </view>
+      <view class="bar-item">
+        <view class="bar-label">记忆偏差</view>
+        <view class="bar-track">
+          <view class="bar-fill" style="width:10%;background:#8b5cf6;"></view>
+        </view>
+        <view class="bar-num">10%</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!list.length}}">
+    <view class="empty-ico">✨</view>
+    <view class="empty-t">Bug未生</view>
+    <view class="empty-d">去历练一番，遇到的Bug会自动收录于此</view>
+  </view>
+
+  <view class="wlist" wx:else>
+    <view class="wcard" wx:for="{{list}}" wx:key="question_id">
+      <view class="w-top">
+        <text class="tag tag-danger">错 {{item.error_count}} 次</text>
+        <text class="w-topic">{{item.topic}}</text>
+      </view>
+      <view class="w-stem">{{item.stem}}</view>
+      <view class="w-src">{{item.src}} · {{item.difficulty}}</view>
+      <view class="w-action">
+        <button class="break-btn" bindtap="breakOne" data-id="{{item.question_id}}">破除此Bug</button>
+      </view>
+    </view>
+  </view>
+</view>

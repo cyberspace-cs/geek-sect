@@ -1,0 +1,87 @@
+﻿<!--pages/exam/exam.wxml · 宗门大比-->
+<view class="page">
+
+  <!-- 首页选择 -->
+  <view class="stage-home" wx:if="{{stage === 'home'}}">
+    <view class="exam-hero">
+      <view class="exam-icon">⚔️</view>
+      <view class="exam-title">宗门大比</view>
+      <view class="exam-desc">全真模拟 · 限时答题 · 检验修炼成果</view>
+    </view>
+
+    <view class="exam-rules">
+      <view class="rule-item">⏱️ 限时 10 分钟</view>
+      <view class="rule-item">📝 20 道精选题</view>
+      <view class="rule-item">🏆 生成完整战报</view>
+    </view>
+
+    <view class="cat-list">
+      <view class="cat-btn" bindtap="startExam" data-cat="考研">考研大比</view>
+      <view class="cat-btn" bindtap="startExam" data-cat="考公">考公大比</view>
+      <view class="cat-btn" bindtap="startExam" data-cat="大厂">大厂大比</view>
+    </view>
+  </view>
+
+  <!-- 倒计时 -->
+  <view class="stage-countdown" wx:if="{{stage === 'countdown'}}">
+    <view class="count-num">{{countNum}}</view>
+    <view class="count-tip">大比即将开始...</view>
+  </view>
+
+  <!-- 答题中 -->
+  <view class="stage-running" wx:if="{{stage === 'running'}}">
+    <view class="exam-header">
+      <view class="exam-progress">{{current + 1}} / {{totalCount}}</view>
+      <view class="exam-timer">⏱️ {{timeLeft}}s</view>
+    </view>
+
+    <view class="question-card">
+      <view class="q-text">{{questions[current].q}}</view>
+      <view class="q-options">
+        <view class="q-option {{answers[current] === idx ? 'selected' : ''}}"
+              wx:for="{{questions[current].options}}" wx:key="idx" wx:for-index="idx"
+              bindtap="selectAnswer" data-i="{{idx}}">
+          <text class="opt-label">{{['A','B','C','D','E','F'][idx]}}.</text>
+          <text class="opt-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="exam-nav">
+      <button class="nav-btn" bindtap="prevQuestion" disabled="{{current === 0}}">上一题</button>
+      <button class="nav-btn primary" bindtap="finishExam" wx:if="{{current === totalCount - 1}}">交卷</button>
+      <button class="nav-btn primary" bindtap="nextQuestion" wx:else>下一题</button>
+    </view>
+  </view>
+
+  <!-- 结果页 -->
+  <view class="stage-result" wx:if="{{stage === 'result'}}">
+    <view class="result-circle">
+      <view class="result-score">{{score}}</view>
+      <view class="result-label">分</view>
+    </view>
+
+    <view class="result-summary">
+      <view class="summary-item">
+        <view class="num">{{correctCount}}</view>
+        <view class="label">答对</view>
+      </view>
+      <view class="summary-item">
+        <view class="num">{{totalCount - correctCount}}</view>
+        <view class="label">答错</view>
+      </view>
+      <view class="summary-item">
+        <view class="num">第 {{rank}} 名</view>
+        <view class="label">本宗排名</view>
+      </view>
+    </view>
+
+    <view class="exp-bonus">
+      <view class="exp-icon">✨</view>
+      <view class="exp-text">获得修为 +{{expGain}}</view>
+    </view>
+
+    <button class="btn-home" bindtap="goHome">返回修炼</button>
+  </view>
+
+</view>

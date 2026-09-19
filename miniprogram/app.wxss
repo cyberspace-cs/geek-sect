@@ -1,0 +1,72 @@
+/* app.wxss · 极客宗 · 赛博朋克全局样式 */
+page {
+  /* 配色系统 */
+  --bg: #0a0a12;
+  --surface: #12121e;
+  --surface-2: #1a1a2e;
+  --line: rgba(255,255,255,.08);
+  --brand: #00ff88;
+  --brand-2: #00ccff;
+  --brand-soft: rgba(0,255,136,.1);
+  --danger: #ff6b6b;
+  --warning: #ffb84d;
+  --success: #00ff88;
+  --ink: #e8e8f0;
+  --ink-2: #b0b0c0;
+  --ink-3: #666680;
+  --radius: 16rpx;
+
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  line-height: 1.6;
+}
+
+view, text, button { box-sizing: border-box; }
+
+/* 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 22rpx 36rpx;
+  border-radius: 12rpx;
+  font-weight: 700;
+  font-size: 30rpx;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00ff88, #00ccff);
+  color: #0a0a12;
+  box-shadow: 0 4rpx 20rpx rgba(0,255,136,.3);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1rpx solid var(--line);
+}
+
+/* 卡片 */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1rpx solid var(--line);
+  padding: 32rpx;
+}
+
+/* 标签 */
+.tag {
+  display: inline-block;
+  font-size: 22rpx;
+  font-weight: 700;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+}
+
+.tag-success { background: rgba(0,255,136,.15); color: var(--success); }
+.tag-warning { background: rgba(255,184,77,.15); color: var(--warning); }
+.tag-danger { background: rgba(255,107,107,.15); color: var(--danger); }
+.tag-info { background: rgba(0,204,255,.15); color: var(--brand-2); }
