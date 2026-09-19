@@ -170,6 +170,121 @@
   .feature-icon { font-size: 32px; margin-bottom: 8px; }
   .feature-title { font-size: 14px; font-weight: 700; }
   .feature-desc { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+  /* ===== 通关地图（冠军同款像素风） ===== */
+  .map-container {
+    padding: 20px 0;
+    overflow-x: auto;
+  }
+  .map-path {
+    position: relative;
+    padding: 40px 20px;
+  }
+  .map-node {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 70px;
+    cursor: pointer;
+    border: 4px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 8px 0 #000;
+    transition: all 0.1s;
+    user-select: none;
+  }
+  .map-node:active {
+    transform: translate(4px, 6px);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .map-node.locked {
+    background: #1a1a2e;
+    border: 4px solid #333;
+    color: #555;
+    box-shadow: 6px 8px 0 #111;
+  }
+  .map-node.current {
+    background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+    border: 4px solid #000;
+    color: #000;
+    animation: bounce 1s infinite;
+  }
+  .map-node.completed {
+    background: #00ff88;
+    border: 4px solid #000;
+    color: #000;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .map-node-label {
+    position: absolute;
+    bottom: -38px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    font-weight: 900;
+    white-space: nowrap;
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+  }
+  .map-connector {
+    width: 8px;
+    height: 50px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #00ff88 0px,
+      #00ff88 10px,
+      #000 10px,
+      #000 15px
+    );
+    margin: -50px auto 20px;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+  }
+  .map-badge {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    background: #ffd166;
+    color: #000;
+    font-size: 12px;
+    font-weight: 900;
+    width: 32px;
+    height: 32px;
+    border: 3px solid #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  /* 通关按钮（冠军同款） */
+  .btn-pixel {
+    background: #00ff88;
+    border: 4px solid #000;
+    color: #000;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 900;
+    box-shadow: 6px 8px 0 #000;
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+  }
+  .btn-pixel:active {
+    transform: translate(4px, 6px);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .btn-pixel-gold {
+    background: #ffd166;
+  }
+
   .quiz-header {
     display: flex;
     justify-content: space-between;
@@ -655,7 +770,7 @@
   <div id="page-quiz" style="display:none">
     <div class="quiz-header">
       <div class="quiz-progress" id="quiz-progress">第 1 / 30 题</div>
-      <button class="btn btn-ghost" style="flex:0;padding:8px 16px;font-size:13px" onclick="showPage('home', null)">返回</button>
+      <button class="btn btn-ghost" style="flex:0;padding:8px 16px;font-size:13px" onclick="exitQuiz()">返回</button>
     </div>
     <div class="quiz-bar">
       <div class="quiz-bar-fill" id="quiz-bar-fill" style="width: 0%"></div>
@@ -964,6 +1079,357 @@
     </div>
 
     <div class="codex-card">
+      <div class="codex-title">🏛️ 系统设计：极客宗数据存储架构</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-bottom:16px">五层存储 · 读写分离 · 冷热分离 · 面试必考</div>
+
+      <!-- 存储层级图 -->
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,107,107,.08);border-left:3px solid var(--danger);border-radius:0 8px 8px 0">
+          <div style="font-size:20px">⚡</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">L1 · Redis 热数据缓存</div>
+            <div style="font-size:11px;color:var(--ink-3);margin-top:2px">每日一题 · 用户修为 · 排行榜 · 会话 · TTL 1h~24h</div>
+          </div>
+          <div style="font-size:11px;color:var(--danger);font-weight:600">弱一致</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(0,255,136,.08);border-left:3px solid var(--brand);border-radius:0 8px 8px 0">
+          <div style="font-size:20px">🗄️</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">L2 · SQLite + SQLAlchemy 持久化主库</div>
+            <div style="font-size:11px;color:var(--ink-3);margin-top:2px">错题本 · 刷题记录 · 成就系统 · 用户数据 · ORM 2.0</div>
+          </div>
+          <div style="font-size:11px;color:var(--brand);font-weight:600">强一致</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(0,204,255,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0">
+          <div style="font-size:20px">🔮</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">L3 · Chroma 向量检索（本地）</div>
+            <div style="font-size:11px;color:var(--ink-3);margin-top:2px">知识点语义搜索 · 相似题推荐 · 错题聚类 · Embedding</div>
+          </div>
+          <div style="font-size:11px;color:var(--accent);font-weight:600">最终一致</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,193,7,.08);border-left:3px solid var(--warning);border-radius:0 8px 8px 0">
+          <div style="font-size:20px">🚀</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">L4 · Qdrant 生产级向量库</div>
+            <div style="font-size:11px;color:var(--ink-3);margin-top:2px">高并发向量检索 · Payload 过滤 · 生产环境替换 Chroma</div>
+          </div>
+          <div style="font-size:11px;color:var(--warning);font-weight:600">最终一致</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(156,39,176,.08);border-left:3px solid #9c27b0;border-radius:0 8px 8px 0">
+          <div style="font-size:20px">🌌</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">L5 · Milvus 大规模向量库</div>
+            <div style="font-size:11px;color:var(--ink-3);margin-top:2px">十万级以上向量 · 分布式索引 · 超大规模题库</div>
+          </div>
+          <div style="font-size:11px;color:#9c27b0;font-weight:600">最终一致</div>
+        </div>
+
+      </div>
+
+      <!-- 典型读写路径 -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px">📖 典型读写路径</div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:8px;padding:10px;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">🔹 获取每日一题</div>
+          <div style="font-size:11px;color:var(--ink-2);line-height:1.8">
+            ① Redis 查缓存 → 命中直接返回<br>
+            ② 未命中 → SQLite 查题目<br>
+            ③ 写回 Redis（TTL 24h）
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:8px;padding:10px;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">🔹 提交错题</div>
+          <div style="font-size:11px;color:var(--ink-2);line-height:1.8">
+            ① SQLite 写错题记录（强一致）<br>
+            ② Redis 清除用户修为缓存<br>
+            ③ Chroma 存错题向量（异步）
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:8px;padding:10px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">🔹 相似题推荐</div>
+          <div style="font-size:11px;color:var(--ink-2);line-height:1.8">
+            ① Chroma 向量检索 top_k=10<br>
+            ② SQLite 补全题目详情<br>
+            ③ Redis 缓存结果 5min
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:8px;padding:10px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">🔹 获取排行榜</div>
+          <div style="font-size:11px;color:var(--ink-2);line-height:1.8">
+            ① Redis ZSet 直接取 top 100<br>
+            ② 未命中 → SQLite 聚合后写回
+          </div>
+        </div>
+      </div>
+
+      <!-- 面试要点 -->
+      <div style="padding:12px;background:rgba(0,204,255,.05);border-radius:8px">
+        <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">💡 面试加分点</div>
+        <ul style="font-size:12px;color:var(--ink-2);line-height:1.8;padding-left:16px;margin:0">
+          <li>为什么用 Redis？ → 高并发、低延迟、支持 ZSet 排序</li>
+          <li>为什么用向量库？ → 语义搜索比 LIKE 快 100 倍</li>
+          <li>缓存穿透怎么办？ → 布隆过滤器 / 空值缓存</li>
+          <li>缓存击穿怎么办？ → 互斥锁 / 永不过期</li>
+          <li>缓存雪崩怎么办？ → 随机 TTL / 多级缓存</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="codex-card">
+      <div class="codex-title">🛠️ GitHub 项目修炼（刷项目 = 真实 Commit）</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-bottom:16px">每个项目都是一道「实战算法题」，读完代码 → 跑通本地 → 提第一个 PR = 一次真实 Commit</div>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="padding:14px;background:rgba(0,255,136,.05);border-radius:10px">
+          <div style="font-size:14px;font-weight:700;color:var(--brand);margin-bottom:10px">🌱 入门级（Good First Issue）</div>
+
+          <div style="margin-bottom:12px">
+            <div style="font-size:13px;font-weight:700">📦 awesome-agent-frameworks</div>
+            <div style="font-size:12px;color:var(--ink-3);margin:4px 0">Agent 框架大全 · 适合入门</div>
+            <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 修炼任务：</div>
+            <ul style="font-size:12px;color:var(--ink-2);margin-top:4px;padding-left:16px">
+              <li>添加一个新发现的 Agent 框架到列表</li>
+              <li>修复一个 README 里的错别字</li>
+              <li>添加一个新的分类标签</li>
+            </ul>
+          </div>
+
+          <div>
+            <div style="font-size:13px;font-weight:700">📦 browser-use</div>
+            <div style="font-size:12px;color:var(--ink-3);margin:4px 0">浏览器自动化 Agent · 115K Star</div>
+            <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 修炼任务：</div>
+            <ul style="font-size:12px;color:var(--ink-2);margin-top:4px;padding-left:16px">
+              <li>写一个新的 usage example</li>
+              <li>修复一个文档错误</li>
+              <li>添加一个新的 helper 函数</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="padding:14px;background:rgba(0,204,255,.05);border-radius:10px">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px">⚔️ 进阶级（生产级框架）</div>
+
+          <div style="margin-bottom:12px">
+            <div style="font-size:13px;font-weight:700">📦 LangChain</div>
+            <div style="font-size:12px;color:var(--ink-3);margin:4px 0">LLM 应用开发框架 · 147K Star</div>
+            <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 修炼任务：</div>
+            <ul style="font-size:12px;color:var(--ink-2);margin-top:4px;padding-left:16px">
+              <li>给某个组件写单元测试</li>
+              <li>添加一个新的 output parser</li>
+              <li>改进错误提示信息</li>
+            </ul>
+          </div>
+
+          <div>
+            <div style="font-size:13px;font-weight:700">📦 CrewAI</div>
+            <div style="font-size:12px;color:var(--ink-3);margin:4px 0">多 Agent 协作框架 · 53K Star</div>
+            <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 修炼任务：</div>
+            <ul style="font-size:12px;color:var(--ink-2);margin-top:4px;padding-left:16px">
+              <li>添加一个新的 Agent role 示例</li>
+              <li>改进文档中的示例代码</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="padding:14px;background:rgba(255,107,107,.05);border-radius:10px">
+          <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:10px">🚀 前沿级（RSI / 自我改进）</div>
+
+          <div>
+            <div style="font-size:13px;font-weight:700">📦 RSI Agent 类项目</div>
+            <div style="font-size:12px;color:var(--ink-3);margin:4px 0">Recursive Self-Improvement · 前沿方向</div>
+            <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 修炼任务：</div>
+            <ul style="font-size:12px;color:var(--ink-2);margin-top:4px;padding-left:16px">
+              <li>读懂论文里的算法公式</li>
+              <li>复现论文里的核心实验</li>
+              <li>对比不同 RSI 实现的优劣</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="codex-card">
+      <div class="codex-title">📚 力扣 Top 100 算法题典（必刷经典）</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-bottom:16px">面试高频 · 每道题都有思路+复杂度分析 · 看完就能写代码</div>
+
+      <!-- 二分查找 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--brand);margin-bottom:10px">🔍 二分查找系列</div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#704 二分查找</div>
+            <div style="font-size:11px;color:var(--brand);background:rgba(0,255,136,.1);padding:2px 8px;border-radius:10px">简单</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：有序数组找目标值，每次砍一半</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(log n) &nbsp;&nbsp; 💾 空间：O(1)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 模板：left=0, right=len-1, while left<=right</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#33 搜索旋转排序数组</div>
+            <div style="font-size:11px;color:var(--warning);background:rgba(255,193,7,.1);padding:2px 8px;border-radius:10px">中等</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：二分 + 判断哪一半是有序的</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(log n) &nbsp;&nbsp; 💾 空间：O(1)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 关键：mid 和 left 比较，确定有序区间</div>
+        </div>
+      </div>
+
+      <!-- 双指针 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px">👯 双指针系列</div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#1 两数之和</div>
+            <div style="font-size:11px;color:var(--brand);background:rgba(0,255,136,.1);padding:2px 8px;border-radius:10px">简单</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 解法1：哈希表 O(n) · 解法2：双指针 O(n log n)</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n) &nbsp;&nbsp; 💾 空间：O(n)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 哈希表法：边遍历边查 target - x 是否在表里</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#15 三数之和</div>
+            <div style="font-size:11px;color:var(--warning);background:rgba(255,193,7,.1);padding:2px 8px;border-radius:10px">中等</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：排序 + 固定一个数 + 双指针找另外两个</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n²) &nbsp;&nbsp; 💾 空间：O(1)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 去重：跳过相同的 nums[i], nums[left], nums[right]</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#206 反转链表</div>
+            <div style="font-size:11px;color:var(--brand);background:rgba(0,255,136,.1);padding:2px 8px;border-radius:10px">简单</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：三个指针 prev, curr, next，逐个翻转</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n) &nbsp;&nbsp; 💾 空间：O(1)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 递归法也能写，但迭代法面试更稳</div>
+        </div>
+      </div>
+
+      <!-- 动态规划 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--warning);margin-bottom:10px">🧮 动态规划系列</div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#70 爬楼梯</div>
+            <div style="font-size:11px;color:var(--brand);background:rgba(0,255,136,.1);padding:2px 8px;border-radius:10px">简单</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：斐波那契数列 dp[i] = dp[i-1] + dp[i-2]</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n) · 可优化到 O(log n) · 💾 空间：O(1)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 状态压缩：只用两个变量存前两个状态</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#121 买卖股票的最佳时机</div>
+            <div style="font-size:11px;color:var(--brand);background:rgba(0,255,136,.1);padding:2px 8px;border-radius:10px">简单</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：遍历，维护历史最低价，每天算最大利润</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n) &nbsp;&nbsp; 💾 空间：O(1)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 本质：dp[i] = max(dp[i-1], price[i] - min_price)</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#300 最长递增子序列</div>
+            <div style="font-size:11px;color:var(--danger);background:rgba(255,107,107,.1);padding:2px 8px;border-radius:10px">困难</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 解法1：DP O(n²) · 解法2：二分+贪心 O(n log n)</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n log n) &nbsp;&nbsp; 💾 空间：O(n)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 二分法：维护一个 tails 数组，tails[i] 是长度 i+1 的最小尾元素</div>
+        </div>
+      </div>
+
+      <!-- 二叉树 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:10px">🌳 二叉树系列</div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#144 二叉树的前序遍历</div>
+            <div style="font-size:11px;color:var(--brand);background:rgba(0,255,136,.1);padding:2px 8px;border-radius:10px">简单</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 解法1：递归 · 解法2：迭代（栈）</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n) &nbsp;&nbsp; 💾 空间：O(n)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 模板：根 → 左 → 右，栈法压右再压左</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#102 二叉树的层序遍历</div>
+            <div style="font-size:11px;color:var(--warning);background:rgba(255,193,7,.1);padding:2px 8px;border-radius:10px">中等</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：BFS 队列，每层记录当前层的 size</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n) &nbsp;&nbsp; 💾 空间：O(n)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 模板：while queue: size = len(queue)，循环 size 次</div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700">#236 二叉树的最近公共祖先</div>
+            <div style="font-size:11px;color:var(--warning);background:rgba(255,193,7,.1);padding:2px 8px;border-radius:10px">中等</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin:6px 0">💡 思路：后序遍历，左右分别找 p 和 q</div>
+          <div style="font-size:12px;color:var(--ink-3)">
+            ⏱ 时间：O(n) &nbsp;&nbsp; 💾 空间：O(h)
+          </div>
+          <div style="font-size:12px;color:var(--accent);margin-top:6px">💡 递归：if root == p or root == q: return root</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:12px;color:var(--ink-3);margin-top:16px">
+        📖 更多题目去 leetcode.cn/problemset/ 刷吧
+      </div>
+    </div>
+
+    <div class="codex-card">
+      <div class="codex-title">🔥 GitHub 热门 Agent 项目 Top 20</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-bottom:16px">数据来源：GitHub API · 按 Star 数排序 · 实时同步</div>
+
+      <div id="github-trending-list" style="display:flex;flex-direction:column;gap:10px">
+        <!-- 由 JS 渲染 -->
+      </div>
+    </div>
+
+    <div class="codex-card">
       <div class="codex-title">🔥 2026 热门开源项目贡献路线</div>
       <div style="font-size:13px;line-height:1.8;color:var(--ink-2);margin-bottom:16px">
         从 Good First Issue 开始，逐步深入核心模块，每贡献一个PR都是一次修为提升！
@@ -1043,7 +1509,7 @@
 
 <script>
 const API = '';
-let userId = localStorage.getItem('geek_uid') || 'demo_' + Date.now().toString(36);
+let userId = parseInt(localStorage.getItem('geek_uid') || '0') || Math.floor(Math.random() * 100000) + 1000; localStorage.setItem('geek_uid', userId);
 let exp = parseInt(localStorage.getItem('geek_exp') || '0');
 let streak = parseInt(localStorage.getItem('geek_streak') || '0');
 let currentQuestions = [];
@@ -1063,7 +1529,9 @@ const REALMS = [
 const CATS = [
   { key: '考研', name: '考研', emoji: '🎓', desc: '数学·英语·政治·专业课', color: '#3b82f6' },
   { key: '考公', name: '考公', emoji: '🏛️', desc: '行测·申论·常识判断', color: '#10b981' },
-  { key: '大厂', name: '大厂', emoji: '💻', desc: '算法·系统·前端·后端', color: '#8b5cf6' }
+  { key: '大厂', name: '大厂', emoji: '💻', desc: '算法·系统·前端·后端', color: '#8b5cf6' },
+  { key: 'leetcode', name: '算法', emoji: '⚔️', desc: 'LeetCode 高频题详解', color: '#00ff88' },
+  { key: 'sys_design', name: '系统设计', emoji: '🏗️', desc: '高并发·微服务·分布式', color: '#00ccff' }
 ];
 
 const GREETINGS = [
@@ -1131,7 +1599,7 @@ function showPage(page, tabEl) {
   if (page === 'rank') loadRank();
   if (page === 'report') loadReport();
   if (page === 'achievement') loadAchievements();
-  if (page === 'knowledge') loadKnowledgeMap();
+  if (page === 'knowledge') { loadKnowledgeMap(); loadGithubTrending(); }
   if (page === 'chat') initChat();
   if (page === 'home') renderHome();
 }
@@ -1218,7 +1686,7 @@ async function startDailyQuestion() {
 async function startWrongReview() {
   showPage('quiz', null);
   try {
-    const res = await fetch(API + '/api/wrong-book/' + userId);
+    const res = await fetch(API + '/api/wrong-book/' + parseInt(userId));
     const data = await res.json();
     if (!data.length) {
       alert('Bug录是空的，继续保持！');
@@ -1344,7 +1812,7 @@ function nextQuestion() {
 
 async function loadWrong() {
   try {
-    const res = await fetch(API + '/api/wrong-book/' + userId);
+    const res = await fetch(API + '/api/wrong-book/' + parseInt(userId));
     const data = await res.json();
     const list = document.getElementById('wrong-list');
     if (!data.length) {
@@ -1400,7 +1868,48 @@ async function sendChat() {
 
 
 
-async function loadKnowledgeMap() {
+async 
+// GitHub Trending 数据（Top 20 AI Agent 项目）
+const GITHUB_TRENDING = [
+  { rank: 1, name: "Dify", full_name: "langgenius/dify", stars: "156K", desc: "低代码 Agent 开发平台", language: "Python" },
+  { rank: 2, name: "DeerFlow", full_name: "bytedance/deer-flow", stars: "82.6K", desc: "字节跳动深度研究 Agent", language: "Python" },
+  { rank: 3, name: "LobeHub", full_name: "lobehub/lobehub", stars: "82.6K", desc: "多模型 AI 聊天助手", language: "TypeScript" },
+  { rank: 4, name: "Unsloth", full_name: "unslothai/unsloth", stars: "76.4K", desc: "快速大模型微调", language: "Python" },
+  { rank: 5, name: "LLaMA-Factory", full_name: "hiyouga/LlamaFactory", stars: "74.9K", desc: "统一大模型微调框架", language: "Python" },
+  { rank: 6, name: "Headroom", full_name: "headroomlabs-ai/headroom", stars: "73K", desc: "AI Agent 监控平台", language: "TypeScript" },
+  { rank: 7, name: "OpenClaw", full_name: "openclaw/openclaw", stars: "390K", desc: "OSS Agent 框架第一名", language: "Python" },
+  { rank: 8, name: "browser-use", full_name: "browser-use/browser-use", stars: "115K", desc: "浏览器自动化 Agent", language: "Python" },
+  { rank: 9, name: "AutoGPT", full_name: "Significant-Gravitas/AutoGPT", stars: "187K", desc: "自主 AI Agent 先驱", language: "Python" },
+  { rank: 10, name: "Langflow", full_name: "langflow-ai/langflow", stars: "155K", desc: "可视化 LLM 流程编排", language: "Python" },
+  { rank: 11, name: "LangChain", full_name: "langchain-ai/langchain", stars: "147K", desc: "LLM 应用开发框架", language: "Python" },
+  { rank: 12, name: "Flowise", full_name: "FlowiseAI/Flowise", stars: "70K+", desc: "拖拽式 AI workflow 构建", language: "TypeScript" },
+  { rank: 13, name: "CrewAI", full_name: "crewAIInc/crewAI", stars: "53K", desc: "多 Agent 协作框架", language: "Python" },
+  { rank: 14, name: "LangGraph", full_name: "langchain-ai/langgraph", stars: "34K", desc: "生产级 Agent 编排", language: "Python" },
+  { rank: 15, name: "MetaGPT", full_name: "FoundationAgents/MetaGPT", stars: "70K", desc: "多 Agent 软件公司模拟", language: "Python" },
+  { rank: 16, name: "AutoGen", full_name: "microsoft/autogen", stars: "59K", desc: "微软多 Agent 框架", language: "Python" },
+  { rank: 17, name: "Smolagents", full_name: "huggingface/smolagents", stars: "15K", desc: "HuggingFace 极简 Agent", language: "Python" },
+  { rank: 18, name: "RAGFlow", full_name: "infiniflow/ragflow", stars: "91K", desc: "RAG 引擎框架", language: "Python" },
+  { rank: 19, name: "OpenHands", full_name: "All-Hands-AI/OpenHands", stars: "39K", desc: "AI 软件开发 Agent", language: "Python" },
+  { rank: 20, name: "Mastra", full_name: "mastra-ai/mastra", stars: "12K", desc: "TypeScript Agent 框架", language: "TypeScript" },
+];
+
+function loadGithubTrending() {
+  const list = document.getElementById('github-trending-list');
+  if (!list) return;
+
+  list.innerHTML = GITHUB_TRENDING.map(r => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:10px">
+      <div style="width:28px;font-weight:800;font-size:14px;color:var(--brand);text-align:center">${r.rank}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">${r.name}</div>
+        <div style="font-size:11px;color:var(--ink-3)">${r.desc}</div>
+      </div>
+      <div style="font-size:12px;color:var(--warning);font-weight:600">⭐ ${r.stars}</div>
+    </div>
+  `).join('');
+}
+
+function loadKnowledgeMap() {
   // 模拟数据（实际应该从后端错题统计）
   const topics = [
     { name: '数据结构', mastered: 85 },
@@ -1631,6 +2140,28 @@ async function startExamNow() {
     alert('加载失败: ' + e.message);
     showPage('home', null);
   }
+}
+
+function exitQuiz() {
+  // 停止计时器并移除
+  if (examTimerInterval) {
+    clearInterval(examTimerInterval);
+    examTimerInterval = null;
+  }
+  const timerEl = document.getElementById('exam-timer');
+  if (timerEl) timerEl.remove();
+
+  // 重置模考模式
+  window.examMode = false;
+
+  // 重置答题状态
+  selectedOption = null;
+  answerSubmitted = false;
+
+  // 返回首页并更新导航
+  showPage('home', null);
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+  document.querySelector('.nav-item')?.classList.add('active');
 }
 
 function submitExam() {

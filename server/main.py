@@ -747,6 +747,10 @@ def page_questions(
     }
 
 
+@app.get("/api/test-storage")
+def test_storage():
+    return {"ok": True, "message": "Storage API works!"}
+
 @app.get("/api/questions/meta")
 def questions_meta():
     """公开展示题库概况（无需登录），用于首页/demo 展示与体验模式统计。
@@ -1858,6 +1862,38 @@ COACH_PREFIX = os.getenv("COACH_PREFIX", "")
 @app.get("/")
 def root():
     return RedirectResponse(url=COACH_PREFIX + "/coach.html")
+
+
+# ================================================================
+# 极客宗 · 多层存储层 API
+# ================================================================
+from storage import storage
+
+@app.get("/api/storage/stats")
+def storage_stats():
+    """获取多层存储层运行状态"""
+    stats = storage.get_stats()
+    has_redis = hasattr(storage.cache, '_client')
+    return {
+        "tiers": {
+            "L1_redis": "✅ 运行中 (真实 Redis)" if has_redis else "⚡ 内存缓存（降级）",
+            "L2_sqlite": "✅ 运行中 (SQLite 持久化)",
+            "L3_chroma": f"🔮 已初始化 ({stats['vector_count']} 条向量)" if stats['vector_count'] > 0 else "💤 未初始化（懒加载）",
+        },
+        "stats": stats,
+        "architecture": [
+            {"tier": "L1", "name": "Redis", "use_case": "热数据缓存"},
+            {"tier": "L2", "name": "SQLite", "use_case": "持久化主库"},
+            {"tier": "L3", "name": "Chroma", "use_case": "向量检索"},
+        ]
+    }
+
+@app.post("/api/storage/warmup")
+def storage_warmup():
+    """预热向量库"""
+    storage.vector.init()
+    return {"ok": True, "message": "向量库已初始化"}
+
 
 _STATIC_DIR = os.getenv("STATIC_DIR", os.path.dirname(DB_DIR))
 app.mount("/", StaticFiles(directory=_STATIC_DIR, html=True), name="static")
