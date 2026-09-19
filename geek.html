@@ -170,83 +170,114 @@
   .feature-icon { font-size: 32px; margin-bottom: 8px; }
   .feature-title { font-size: 14px; font-weight: 700; }
   .feature-desc { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
-  /* ===== 通关地图（冠军同款像素风） ===== */
-  .map-container {
-    padding: 20px 0;
-    overflow-x: auto;
+  /* ===== 通关地图（冠军游戏风格） ===== */
+  .game-map-shell {
+    background: #1a1a2e;
+    border: 4px solid #000;
+    border-radius: 16px;
+    box-shadow: 8px 10px 0 #000;
+    overflow: hidden;
+    margin: 0 -10px;
   }
-  .map-path {
-    position: relative;
-    padding: 40px 20px;
-  }
-  .map-node {
-    position: relative;
-    width: 100px;
-    height: 100px;
+  .game-hud {
+    background: #fff7e8;
+    border-bottom: 4px solid #000;
+    padding: 12px 16px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 900;
+    color: #07142e;
+  }
+  .game-hud-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .game-hud-logo {
+    width: 36px;
+    height: 36px;
+    background: #00ff88;
+    border: 3px solid #000;
+    display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 40px;
-    margin: 0 auto 70px;
-    cursor: pointer;
+    font-size: 20px;
+  }
+  .game-hud-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+  }
+  .game-hearts {
+    color: #e73535;
+    font-size: 18px;
+    text-shadow: 1px 2px 0 #000;
+  }
+  .game-stars {
+    color: #ffd166;
+    text-shadow: 1px 2px 0 #000;
+  }
+
+  .game-levels {
+    padding: 30px 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .game-level-card {
+    background: #fff7e8;
     border: 4px solid #000;
     border-radius: 12px;
     box-shadow: 6px 8px 0 #000;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
     transition: all 0.1s;
+    position: relative;
     user-select: none;
   }
-  .map-node:active {
+  .game-level-card:active {
     transform: translate(4px, 6px);
     box-shadow: 2px 2px 0 #000;
   }
-  .map-node.locked {
-    background: #1a1a2e;
-    border: 4px solid #333;
-    color: #555;
+  .game-level-card.locked {
+    background: #2a2a3e;
+    color: #666;
     box-shadow: 6px 8px 0 #111;
+    cursor: not-allowed;
   }
-  .map-node.current {
+  .game-level-card.current {
     background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
-    border: 4px solid #000;
-    color: #000;
-    animation: bounce 1s infinite;
+    animation: gamebounce 1.5s infinite;
   }
-  .map-node.completed {
+  .game-level-card.completed {
     background: #00ff88;
-    border: 4px solid #000;
-    color: #000;
   }
-  @keyframes bounce {
+  @keyframes gamebounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    50% { transform: translateY(-6px); }
   }
-  .map-node-label {
-    position: absolute;
-    bottom: -38px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 13px;
+  .game-level-emoji {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+  .game-level-name {
+    font-size: 16px;
     font-weight: 900;
-    white-space: nowrap;
-    color: #fff;
-    text-shadow: 2px 2px 0 #000;
+    color: #07142e;
+    text-shadow: 1px 2px 0 rgba(255,255,255,0.5);
   }
-  .map-connector {
-    width: 8px;
-    height: 50px;
-    background: repeating-linear-gradient(
-      to bottom,
-      #00ff88 0px,
-      #00ff88 10px,
-      #000 10px,
-      #000 15px
-    );
-    margin: -50px auto 20px;
-    border-left: 2px solid #000;
-    border-right: 2px solid #000;
+  .game-level-card.locked .game-level-name {
+    color: #888;
   }
-  .map-badge {
+  .game-level-desc {
+    font-size: 11px;
+    color: #627087;
+    margin-top: 4px;
+  }
+  .game-level-badge {
     position: absolute;
     top: -12px;
     right: -12px;
@@ -254,14 +285,21 @@
     color: #000;
     font-size: 12px;
     font-weight: 900;
-    width: 32px;
-    height: 32px;
+    padding: 4px 10px;
     border: 3px solid #000;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 20px;
     box-shadow: 2px 2px 0 #000;
+  }
+  .game-level-card.completed .game-level-badge {
+    background: #10b981;
+    color: #fff;
+  }
+
+  .game-levels-row {
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
   }
 
   /* 通关按钮（冠军同款） */
@@ -283,6 +321,10 @@
   }
   .btn-pixel-gold {
     background: #ffd166;
+  }
+  .btn-pixel-coral {
+    background: #ff6b57;
+    color: #fff;
   }
 
   .quiz-header {
@@ -1486,12 +1528,102 @@
     <div class="section-title">论道堂 · 排行榜</div>
     <div class="cat-list" id="rank-list"></div>
   </div>
+
+  <!-- 通关地图页面（冠军游戏风格） -->
+  <div id="page-map" style="display:none">
+    <div class="page-title" style="text-shadow: 3px 3px 0 #000;">🗺️ 极客宗 · 修炼之路</div>
+
+    <div class="game-map-shell">
+      <!-- 顶部 HUD -->
+      <div class="game-hud">
+        <div class="game-hud-left">
+          <div class="game-hud-logo">⚔️</div>
+          <b>极客宗</b>
+        </div>
+        <div class="game-hud-right">
+          <span class="game-stars">⭐ <span id="map-stars">0</span></span>
+          <span class="game-hearts">♥♥♥</span>
+        </div>
+      </div>
+
+      <!-- 关卡选择 -->
+      <div class="game-levels">
+
+        <!-- 第1关：筑基期 -->
+        <div class="game-level-card completed" onclick="startQuiz('考研', this)">
+          <div class="game-level-badge">✓ 已通关</div>
+          <div class="game-level-emoji">🌱</div>
+          <div class="game-level-name">第1关 · 筑基期</div>
+          <div class="game-level-desc">计算机基础入门</div>
+        </div>
+
+        <!-- 第2关：金丹期 -->
+        <div class="game-level-card current" onclick="startQuiz('leetcode', this)">
+          <div class="game-level-badge">🔥 当前</div>
+          <div class="game-level-emoji">⚔️</div>
+          <div class="game-level-name">第2关 · 金丹期</div>
+          <div class="game-level-desc">LeetCode 算法修炼</div>
+        </div>
+
+        <!-- 第3关：元婴期 -->
+        <div class="game-level-card locked" onclick="showToast('通关第2关解锁！')">
+          <div class="game-level-emoji">🏗️</div>
+          <div class="game-level-name">第3关 · 元婴期</div>
+          <div class="game-level-desc">系统设计进阶</div>
+        </div>
+
+        <!-- 第4关：化神期 -->
+        <div class="game-level-card locked" onclick="showToast('通关第3关解锁！')">
+          <div class="game-level-emoji">🤖</div>
+          <div class="game-level-name">第4关 · 化神期</div>
+          <div class="game-level-desc">Agent 框架实战</div>
+        </div>
+
+        <!-- 第5关：渡劫期 -->
+        <div class="game-level-card locked" onclick="showToast('通关第4关解锁！')">
+          <div class="game-level-emoji">🌌</div>
+          <div class="game-level-name">第5关 · 渡劫期</div>
+          <div class="game-level-desc">RSI 前沿技术</div>
+        </div>
+
+        <!-- 第6关：飞升 -->
+        <div class="game-level-card locked" onclick="showToast('最终挑战！')">
+          <div class="game-level-emoji">🚀</div>
+          <div class="game-level-name">第6关 · 飞升</div>
+          <div class="game-level-desc">开源贡献 PR</div>
+        </div>
+
+        <div class="game-levels-row" style="flex-direction:column;gap:12px">
+          <button class="btn-pixel btn-pixel-gold" onclick="startQuiz('leetcode', this)">
+            ⚔️ 立即挑战当前关卡
+          </button>
+          <button class="btn-pixel btn-pixel-coral" onclick="window.open('/game/index.html', '_blank')">
+            🎮 玩冠军游戏 · 地铁旅团
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:16px;background:#1a1a2e;border:4px solid #000;box-shadow:6px 8px 0 #000;border-radius:12px">
+      <div style="font-size:14px;font-weight:900;color:#ffd166;margin-bottom:8px;text-shadow:2px 2px 0 #000">💡 修炼规则</div>
+      <ul style="font-size:12px;color:#fff;line-height:1.8;padding-left:18px;margin:0">
+        <li>每关连续答对 20 题即可解锁下一关</li>
+        <li>错题自动进入 Bug录，反复刷直到全对</li>
+        <li>通关 = 真实掌握，不是背答案</li>
+      </ul>
+    </div>
+  </div>
 </div>
 
 <div class="tab-bar">
   <div class="tab-item active" onclick="showPage('home', this)">
     <div class="tab-icon">🏠</div>
     首页
+  </div>
+  <div class="tab-item" onclick="showPage('map', this)">
+    <div class="tab-icon">🗺️</div>
+    通关
   </div>
   <div class="tab-item" onclick="showPage('wrong', this)">
     <div class="tab-icon">🐛</div>
@@ -2160,8 +2292,8 @@ function exitQuiz() {
 
   // 返回首页并更新导航
   showPage('home', null);
-  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-  document.querySelector('.nav-item')?.classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(x => x.classList.remove('active'));
+  document.querySelector('.tab-item')?.classList.add('active');
 }
 
 function submitExam() {
@@ -2227,6 +2359,7 @@ renderHome();
 renderCats();
 checkDailyStatus();
 checkGithubBinding();
+console.log('极客宗初始化完成！分类数:', CATS.length);
 </script>
 </body>
 </html>
